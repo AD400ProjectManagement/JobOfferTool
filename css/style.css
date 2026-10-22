@@ -127,3 +127,43 @@ button:hover {
 #exportBtn:hover {
     background-color: #2d3748;
 }
+
+.addOfferContainer {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+#addOfferBtn {
+    background-color: transparent;
+    color: #3182ce;
+    border: 2px dashed #3182ce;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+#addOfferBtn:hover {
+    background-color: #ebf8ff;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.removeOfferBtn {
+    background: transparent;
+    border: none;
+    color: #e53e3e;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+}
+
+.removeOfferBtn:hover {
+    text-decoration: underline;
+}

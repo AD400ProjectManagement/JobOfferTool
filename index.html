@@ -15,112 +15,119 @@
     </header>
 
     <main>
-        <!-- Preference Criteria -->
-        <section id="preferenceCriteria">
-            <h2>Preference Criteria (Weights 1 - 10)</h2>
-            <div class="formGroup">
-                <label for="salaryWeight">Salary Weight:</label>
-                <input type="number" id="salaryWeight" min="1" max="10" placeholder="e.g., 8">
+        <form id="evaluationForm">
+            <!-- Preference Criteria -->
+            <section id="preferenceCriteria">
+                <h2>Preference Criteria (Weights 1 - 10)</h2>
+                <div class="formGroup">
+                    <label for="salaryWeight">Salary Weight:</label>
+                    <input type="number" id="salaryWeight" min="1" max="10" placeholder="1-10" required>
 
-                <label for="workModeWeight">Work Mode Weight:</label>
-                <input type="number" id="workModeWeight" min="1" max="10" placeholder="e.g., 6">
+                    <label for="workModeWeight">Work Mode Weight:</label>
+                    <input type="number" id="workModeWeight" min="1" max="10" placeholder="1-10" required>
 
-                <label for="benefitsWeight">Benefits Weight:</label>
-                <input type="number" id="benefitsWeight" min="1" max="10" placeholder="e.g., 5">
+                    <label for="benefitsWeight">Benefits Weight:</label>
+                    <input type="number" id="benefitsWeight" min="1" max="10" placeholder="1-10" required>
 
-                <label for="vacationWeight">Vacation/PTO Weight:</label>
-                <input type="number" id="vacationWeight" min="1" max="10" placeholder="e.g., 7">
+                    <label for="vacationWeight">Vacation/PTO Weight:</label>
+                    <input type="number" id="vacationWeight" min="1" max="10" placeholder="1-10" required>
+                </div>
+            </section>
+
+            <!-- Job Offers -->
+            <div class="offersContainer">
+                <!-- Job Offer One Form -->
+                <section class="offerCard" id="offer1">
+                    <h3>Job Offer One</h3>
+
+                    <label for="companyName1">Company Name</label>
+                    <input type="text" id="companyName1" placeholder="e.g. Amazon Web Solutions" required>
+
+                    <label for="jobTitle1">Job Title</label>
+                    <input type="text" id="jobTitle1" placeholder="e.g. Software Engineer" required>
+
+                    <label for="salary1">Annual Salary ($USD)</label>
+                    <input type="number" id="salary1" min="1" placeholder="e.g. 95000" required>
+
+                    <label for="workMode1">Work Mode</label>
+                    <select id="workMode1" required>
+                        <option value="" disabled selected>Select Work Mode</option>
+                        <option value="Remote">Remote</option>
+                        <option value="Hybrid">Hybrid</option>
+                        <option value="On-site">On-site</option>
+                    </select>
+
+                    <label for="vacationDays1">Vacation Days / PTO</label>
+                    <input type="number" id="vacationDays1" min="0" placeholder="e.g. 15" required>
+
+                    <label for="healthBenefits1">Health Benefits Rating (1-10)</label>
+                    <input type="number" id="healthBenefits1" min="1" max="10" placeholder="Rating 1-10" required>
+
+                    <fieldset>
+                        <legend>Relocation Required?</legend>
+                        <input type="radio" id="relocation1yes" name="relocation1" value="Yes" required>
+                        <label for="relocation1yes">Yes</label>
+
+                        <input type="radio" id="relocation1no" name="relocation1" value="No" checked>
+                        <label for="relocation1no">No</label>
+                    </fieldset>
+
+                    <label for="netPayAfterRelocation1">Net Pay After Relocation ($)</label>
+                    <input type="number" id="netPayAfterRelocation1" placeholder="Estimated net pay">
+                </section>
+
+                <!-- Job Offer Two Form -->
+                <section class="offerCard" id="offer2">
+                    <h3>Job Offer Two</h3>
+
+                    <label for="companyName2">Company Name</label>
+                    <input type="text" id="companyName2" placeholder="e.g. Globex Inc" required>
+
+                    <label for="jobTitle2">Job Title</label>
+                    <input type="text" id="jobTitle2" placeholder="e.g. Frontend Developer" required>
+
+                    <label for="salary2">Annual Salary ($)</label>
+                    <input type="number" id="salary2" min="1" placeholder="e.g. 105000" required>
+
+                    <label for="workMode2">Work Mode</label>
+                    <select id="workMode2" required>
+                        <option value="" disabled selected>Select Work Mode</option>
+                        <option value="Remote">Remote</option>
+                        <option value="Hybrid">Hybrid</option>
+                        <option value="On-site">On-site</option>
+                    </select>
+
+                    <label for="vacationDays2">Vacation Days / PTO</label>
+                    <input type="number" id="vacationDays2" min="0" placeholder="e.g. 20" required>
+
+                    <label for="healthBenefits2">Health Benefits Rating (1-10)</label>
+                    <input type="number" id="healthBenefits2" min="1" max="10" placeholder="Rating 1-10" required>
+
+                    <fieldset>
+                        <legend>Relocation Required?</legend>
+                        <input type="radio" id="relocation2yes" name="relocation2" value="Yes" required>
+                        <label for="relocation2yes">Yes</label>
+
+                        <input type="radio" id="relocation2no" name="relocation2" value="No" checked>
+                        <label for="relocation2no">No</label>
+                    </fieldset>
+
+                    <label for="netPayAfterRelocation2">Net Pay After Relocation ($)</label>
+                    <input type="number" id="netPayAfterRelocation2" placeholder="Estimated net pay">
+                </section>
             </div>
-        </section>
 
-        <!-- Job Offers -->
-        <div class="offersContainer">
-            <!-- Job Offer One Form -->
-            <section class="offerCard" id="offer1">
-                <h3>Job Offer One</h3>
+            <!-- Add Offer Button -->
+            <div class="addOfferContainer">
+                <button type="button" id="addOfferBtn">Add Another Offer</button>
+            </div>
 
-                <label for="companyName1">Company Name</label>
-                <input type="text" id="companyName1" placeholder="e.g. Amazon Web Solutions">
-
-                <label for="jobTitle1">Job Title</label>
-                <input type="text" id="jobTitle1" placeholder="e.g. Software Engineer">
-
-                <label for="salary1">Annual Salary ($)</label>
-                <input type="number" id="salary1" placeholder="e.g. 95000">
-
-                <label for="workMode1">Work Mode</label>
-                <select id="workMode1">
-                    <option value="" disabled selected>Select Work Mode</option>
-                    <option value="Remote">Remote</option>
-                    <option value="Hybrid">Hybrid</option>
-                    <option value="On-site">On-site</option>
-                </select>
-
-                <fieldset>
-                    <legend>Relocation Required?</legend>
-                    <input type="radio" id="relocation1yes" name="relocation1" value="Yes">
-                    <label for="relocation1yes">Yes</label>
-
-                    <input type="radio" id="relocation1no" name="relocation1" value="No" checked>
-                    <label for="relocation1no">No</label>
-                </fieldset>
-
-                <label for="vacationDays1">Vacation Days / PTO</label>
-                <input type="number" id="vacationDays1" placeholder="e.g. 15">
-
-                <label for="healthBenefits1">Health Benefits Rating (1-10)</label>
-                <input type="number" id="healthBenefits1" min="1" max="10" placeholder="Rating 1-10">
-
-                <label for="netPayAfterRelocation1">Net Pay After Relocation ($)</label>
-                <input type="number" id="netPayAfterRelocation1" placeholder="Estimated net pay">
-            </section>
-
-            <!-- Job Offer Two Form -->
-            <section class="offerCard" id="offer2">
-                <h3>Job Offer Two</h3>
-
-                <label for="companyName2">Company Name</label>
-                <input type="text" id="companyName2" placeholder="e.g. Globex Inc">
-
-                <label for="jobTitle2">Job Title</label>
-                <input type="text" id="jobTitle2" placeholder="e.g. Frontend Developer">
-
-                <label for="salary2">Annual Salary ($)</label>
-                <input type="number" id="salary2" placeholder="e.g. 105000">
-
-                <label for="workMode2">Work Mode</label>
-                <select id="workMode2">
-                    <option value="" disabled selected>Select Work Mode</option>
-                    <option value="Remote">Remote</option>
-                    <option value="Hybrid">Hybrid</option>
-                    <option value="On-site">On-site</option>
-                </select>
-
-                <fieldset>
-                    <legend>Relocation Required?</legend>
-                    <input type="radio" id="relocation2yes" name="relocation2" value="Yes">
-                    <label for="relocation2yes">Yes</label>
-
-                    <input type="radio" id="relocation2no" name="relocation2" value="No" checked>
-                    <label for="relocation2no">No</label>
-                </fieldset>
-
-                <label for="vacationDays2">Vacation Days / PTO</label>
-                <input type="number" id="vacationDays2" placeholder="e.g. 20">
-
-                <label for="healthBenefits2">Health Benefits Rating (1-10)</label>
-                <input type="number" id="healthBenefits2" min="1" max="10" placeholder="Rating 1-10">
-
-                <label for="netPayAfterRelocation2">Net Pay After Relocation ($)</label>
-                <input type="number" id="netPayAfterRelocation2" placeholder="Estimated net pay">
-            </section>
-        </div>
-
-        <!-- Actions -->
-        <div class="actions">
-            <button type="button" id="evaluateBtn">Evaluate Offers</button>
-            <button type="button" id="exportBtn">Export Report</button>
-        </div>
+            <!-- Actions -->
+            <div class="actions">
+                <button type="submit" id="evaluateBtn">Evaluate Offers</button>
+                <button type="button" id="exportBtn">Export Report</button>
+            </div>
+        </form>
 
         <!-- Comparison Report -->
         <section id="comparisonReport" style="display: none;">
@@ -130,6 +137,51 @@
             </div>
         </section>
     </main>
+
+    <!-- Additional Offer Template -->
+    <template id="offerTemplate">
+        <section class="offerCard">
+            <div class="cardHeader">
+                <h3 class="offerTitle">Job Offer</h3>
+                <button type="button" class="removeOfferBtn">Remove</button>
+            </div>
+
+            <label class="label-company">Company Name</label>
+            <input type="text" class="input-company" placeholder="e.g. Initech" required>
+
+            <label class="label-title">Job Title</label>
+            <input type="text" class="input-title" placeholder="e.g. Backend Developer" required>
+
+            <label class="label-salary">Annual Salary ($)</label>
+            <input type="number" class="input-salary" min="1" placeholder="e.g. 110000" required>
+
+            <label class="label-workmode">Work Mode</label>
+            <select class="input-workmode" required>
+                <option value="" disabled selected>Select Work Mode</option>
+                <option value="Remote">Remote</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="On-site">On-site</option>
+            </select>
+
+            <label class="label-vacation">Vacation Days / PTO</label>
+            <input type="number" class="input-vacation" min="0" placeholder="e.g. 18" required>
+
+            <label class="label-benefits">Health Benefits Rating (1-10)</label>
+            <input type="number" class="input-benefits" min="1" max="10" placeholder="Rating 1-10" required>
+
+            <fieldset>
+                <legend>Relocation Required?</legend>
+                <input type="radio" class="radio-yes" value="Yes" required>
+                <label class="label-radio-yes">Yes</label>
+
+                <input type="radio" class="radio-no" value="No" checked>
+                <label class="label-radio-no">No</label>
+            </fieldset>
+
+            <label class="label-netpay">Net Pay After Relocation ($)</label>
+            <input type="number" class="input-netpay" placeholder="Estimated net pay">
+        </section>
+    </template>
 
 </body>
 
