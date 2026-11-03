@@ -7,14 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (form) {
         form.addEventListener("input", () => {
             refreshOfferCheckboxes();
-            
+
             // Auto-update evaluation report if it's already open
             const reportSection = document.getElementById("comparisonReport");
             if (reportSection && reportSection.style.display !== "none") {
                 runOfferEvaluation();
             }
         });
-        
+
         form.addEventListener("change", () => {
             refreshOfferCheckboxes();
         });
@@ -147,22 +147,24 @@ function renderSideBySideComparison(selectedIndices, offers) {
         return;
     }
 
-    // Map selected offers into unique scoped columns to prevent DOM ID collisions
+    // Map selected offers into unique scoped columns
     comparisonContainer.innerHTML = selectedIndices.map((offerIndex, pos) => {
         const offer = offers[offerIndex];
         if (!offer) return '';
-        
-        const scopedColumnId = `column-${pos + 1}`; // e.g., column-1, column-2
 
+        const scopedColumnId = `column-${pos + 1}`;
+        /* ======================================================== */
+        /* TODO (Melkam): Implement salary and net pay data binding */
+        /* e.g., binding annualSalary, netPayAfterRelocation,      */
+        /* currency formatting, and highest salary highlighting.    */
+        /* ======================================================== */
         return `
             <div class="comparison-column" id="${scopedColumnId}">
                 <h3>${offer.companyName}</h3>
                 <div class="comp-metric-row"><span class="comp-metric-label">Job Title:</span> <span>${offer.jobTitle}</span></div>
-                <div class="comp-metric-row"><span class="comp-metric-label">Annual Salary:</span> <span>$${Number(offer.salary || 0).toLocaleString()}</span></div>
                 <div class="comp-metric-row"><span class="comp-metric-label">Work Mode:</span> <span>${offer.workMode}</span></div>
                 <div class="comp-metric-row"><span class="comp-metric-label">PTO Days:</span> <span>${offer.vacationDays}</span></div>
                 <div class="comp-metric-row"><span class="comp-metric-label">Health Benefits:</span> <span>${offer.healthBenefits} / 10</span></div>
-                <div class="comp-metric-row"><span class="comp-metric-label">Net Pay (Relocation):</span> <span>$${offer.netPay}</span></div>
             </div>
         `;
     }).join('');
@@ -170,13 +172,13 @@ function renderSideBySideComparison(selectedIndices, offers) {
 
 function runOfferEvaluation() {
     const offers = gatherAllCurrentOffers();
-    
+
     if (offers.length === 0) {
         alert("Please enter at least one job offer before evaluating.");
         return;
     }
 
-    // Gather Preference Criteria Weights (Default to 5 if empty/invalid)
+    // Gather Preference Criteria Weights
     const weights = {
         salary: parseFloat(document.getElementById("salaryWeight")?.value) || 5,
         workMode: parseFloat(document.getElementById("workModeWeight")?.value) || 5,
@@ -187,21 +189,20 @@ function runOfferEvaluation() {
     // Compute Weighted Scores for each offer
     const evaluatedOffers = offers.map(offer => {
         const salaryVal = parseFloat(offer.salary) || 0;
-        const salaryScore = (salaryVal / 150000) * 10; 
-        
+        const salaryScore = (salaryVal / 150000) * 10;
+
         const ptoVal = parseFloat(offer.vacationDays) || 0;
         const ptoScore = (ptoVal / 25) * 10;
 
         const benefitVal = parseFloat(offer.healthBenefits) || 5;
-        
+
         let workModeScore = 5;
         if (offer.workMode === "Remote") workModeScore = 10;
         else if (offer.workMode === "Hybrid") workModeScore = 7;
         else if (offer.workMode === "On-site") workModeScore = 4;
 
-        // Weighted formula calculation
         const totalWeight = weights.salary + weights.workMode + weights.benefits + weights.vacation;
-        const weightedSum = 
+        const weightedSum =
             (salaryScore * weights.salary) +
             (workModeScore * weights.workMode) +
             (benefitVal * weights.benefits) +
@@ -215,7 +216,7 @@ function runOfferEvaluation() {
         };
     });
 
-    // Find the Winning Offer (Highest calculated score)
+    // Find the Winning Offer
     let highestScore = -1;
     evaluatedOffers.forEach(o => {
         if (o.calculatedScore > highestScore) {
@@ -234,10 +235,12 @@ function runOfferEvaluation() {
         <p class="report-subtitle">Evaluated based on your custom preference criteria weights.</p>
         <div class="report-grid">
             ${evaluatedOffers.map((offer) => {
-                const isWinner = offer.calculatedScore === highestScore && highestScore > 0;
-                const cardClass = isWinner ? "report-card winning-card" : "report-card";
-                
-                return `
+        const isWinner = offer.calculatedScore === highestScore && highestScore > 0;
+        const cardClass = isWinner ? "report-card winning-card" : "report-card";
+        /* =================================================== */
+        /* TODO (Melkam): Add evaluated salary summary metrics */
+        /* =================================================== */
+        return `
                     <div class="${cardClass}" ${isWinner ? 'aria-label="Top ranking winning job offer"' : ''}>
                         ${isWinner ? '<span class="winner-badge">⭐ Top Recommendation ⭐</span>' : ''}
                         <div class="report-score-header">
@@ -245,17 +248,14 @@ function runOfferEvaluation() {
                             <span class="score-badge">${offer.calculatedScore} / 10</span>
                         </div>
                         <div class="report-metric-row"><span class="report-metric-label">Job Title:</span> <span>${offer.jobTitle}</span></div>
-                        <div class="report-metric-row"><span class="report-metric-label">Annual Salary:</span> <span>$${Number(offer.salary || 0).toLocaleString()}</span></div>
                         <div class="report-metric-row"><span class="report-metric-label">Work Mode:</span> <span>${offer.workMode}</span></div>
                         <div class="report-metric-row"><span class="report-metric-label">PTO Days:</span> <span>${offer.vacationDays} days</span></div>
                         <div class="report-metric-row"><span class="report-metric-label">Health Benefits:</span> <span>${offer.healthBenefits} / 10</span></div>
-                        <div class="report-metric-row"><span class="report-metric-label">Net Pay (Relocation):</span> <span>$${offer.netPay || 'N/A'}</span></div>
                     </div>
                 `;
-            }).join('')}
+    }).join('')}
         </div>
     `;
 
-    // Smooth scroll down to the results report
     reportSection.scrollIntoView({ behavior: 'smooth' });
 }

@@ -258,6 +258,11 @@ button:hover {
     color: #4a5568;
 }
 
+/* ======================================================== */
+/* TODO (Melkam): Add salary/net-pay display & highest      */
+/* salary highlight styles here.                            */
+/* ======================================================== */
+
 /* Comparison Report & Scoring Results */
 #comparisonReport {
     display: none; /* Toggled on by JS when evaluation runs */
