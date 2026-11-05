@@ -242,7 +242,7 @@ function runOfferEvaluation() {
         /* =================================================== */
         return `
                     <div class="${cardClass}" ${isWinner ? 'aria-label="Top ranking winning job offer"' : ''}>
-                        ${isWinner ? '<span class="winner-badge">‚≠ê Top Recommendation ‚≠ê</span>' : ''}
+                        ${isWinner ? '<span class="winner-badge">G°… Top Recommendation G°…</span>' : ''}
                         <div class="report-score-header">
                             <span>${offer.companyName || 'Target Company'}</span>
                             <span class="score-badge">${offer.calculatedScore} / 10</span>
