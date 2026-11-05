@@ -167,3 +167,12 @@ button:hover {
 .removeOfferBtn:hover {
     text-decoration: underline;
 }
+.invalid {
+  border: 2px solid #b00020;
+}
+.errorMessage {
+  display: block;
+  color: #b00020;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
