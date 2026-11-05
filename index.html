@@ -131,6 +131,23 @@
             </div>
         </form>
 
+        <!-- Side-by-Side Comparison -->
+        <section id="sideBySideComparison" class="comparison-section-wrapper">
+            <h2>Side-by-Side Offer Comparison</h2>
+            <div class="comparison-toolbar">
+                <p>Select saved offers to compare (minimum 2):</p>
+                <div id="offerSelectionCheckboxes" class="checkbox-group">
+                    <!-- Dynamically populated by ComparisonReport -->
+                </div>
+            </div>
+
+            <div id="comparisonContainer" class="comparison-container">
+                <div id="comparisonFallback" class="comparison-fallback-card">
+                    <p>No offers selected for comparison. Please select at least two offers.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Comparison Report -->
         <section id="comparisonReport" style="display: none;">
             <h2>Comparison Report</h2>
@@ -186,6 +203,9 @@
     </template>
     <script src="script.js"></script>
 
+
+    <!-- Script -->
+    <script src="js/comparison.js"></script>
 
 </body>
 
