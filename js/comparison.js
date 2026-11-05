@@ -1,15 +1,31 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Initialize the comparison feature on page load
+    // Initialize the comparison tool checkboxes on page load
     initComparisonTool();
 
-    // Listen for form interactions or changes to update selection list dynamically
+    // Form interactions & changes to update selection list and live re-calculate report
     const form = document.getElementById("evaluationForm");
     if (form) {
         form.addEventListener("input", () => {
             refreshOfferCheckboxes();
+
+            // Auto-update evaluation report if it's already open
+            const reportSection = document.getElementById("comparisonReport");
+            if (reportSection && reportSection.style.display !== "none") {
+                runOfferEvaluation();
+            }
         });
+
         form.addEventListener("change", () => {
             refreshOfferCheckboxes();
+        });
+    }
+
+    // Evaluate button click handler
+    const evaluateBtn = document.getElementById("evaluateBtn");
+    if (evaluateBtn) {
+        evaluateBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            runOfferEvaluation();
         });
     }
 
@@ -131,23 +147,115 @@ function renderSideBySideComparison(selectedIndices, offers) {
         return;
     }
 
-    // Map selected offers into unique scoped columns to prevent DOM ID collisions
+    // Map selected offers into unique scoped columns
     comparisonContainer.innerHTML = selectedIndices.map((offerIndex, pos) => {
         const offer = offers[offerIndex];
         if (!offer) return '';
-        
-        const scopedColumnId = `column-${pos + 1}`; // e.g., column-1, column-2
 
+        const scopedColumnId = `column-${pos + 1}`;
+        /* ======================================================== */
+        /* TODO (Melkam): Implement salary and net pay data binding */
+        /* e.g., binding annualSalary, netPayAfterRelocation,      */
+        /* currency formatting, and highest salary highlighting.    */
+        /* ======================================================== */
         return `
             <div class="comparison-column" id="${scopedColumnId}">
                 <h3>${offer.companyName}</h3>
                 <div class="comp-metric-row"><span class="comp-metric-label">Job Title:</span> <span>${offer.jobTitle}</span></div>
-                <div class="comp-metric-row"><span class="comp-metric-label">Annual Salary:</span> <span>$${Number(offer.salary || 0).toLocaleString()}</span></div>
                 <div class="comp-metric-row"><span class="comp-metric-label">Work Mode:</span> <span>${offer.workMode}</span></div>
                 <div class="comp-metric-row"><span class="comp-metric-label">PTO Days:</span> <span>${offer.vacationDays}</span></div>
                 <div class="comp-metric-row"><span class="comp-metric-label">Health Benefits:</span> <span>${offer.healthBenefits} / 10</span></div>
-                <div class="comp-metric-row"><span class="comp-metric-label">Net Pay (Reloc):</span> <span>$${offer.netPay}</span></div>
             </div>
         `;
     }).join('');
+}
+
+function runOfferEvaluation() {
+    const offers = gatherAllCurrentOffers();
+
+    if (offers.length === 0) {
+        alert("Please enter at least one job offer before evaluating.");
+        return;
+    }
+
+    // Gather Preference Criteria Weights
+    const weights = {
+        salary: parseFloat(document.getElementById("salaryWeight")?.value) || 5,
+        workMode: parseFloat(document.getElementById("workModeWeight")?.value) || 5,
+        benefits: parseFloat(document.getElementById("benefitsWeight")?.value) || 5,
+        vacation: parseFloat(document.getElementById("vacationWeight")?.value) || 5
+    };
+
+    // Compute Weighted Scores for each offer
+    const evaluatedOffers = offers.map(offer => {
+        const salaryVal = parseFloat(offer.salary) || 0;
+        const salaryScore = (salaryVal / 150000) * 10;
+
+        const ptoVal = parseFloat(offer.vacationDays) || 0;
+        const ptoScore = (ptoVal / 25) * 10;
+
+        const benefitVal = parseFloat(offer.healthBenefits) || 5;
+
+        let workModeScore = 5;
+        if (offer.workMode === "Remote") workModeScore = 10;
+        else if (offer.workMode === "Hybrid") workModeScore = 7;
+        else if (offer.workMode === "On-site") workModeScore = 4;
+
+        const totalWeight = weights.salary + weights.workMode + weights.benefits + weights.vacation;
+        const weightedSum =
+            (salaryScore * weights.salary) +
+            (workModeScore * weights.workMode) +
+            (benefitVal * weights.benefits) +
+            (ptoScore * weights.vacation);
+
+        const finalScore = totalWeight > 0 ? (weightedSum / totalWeight).toFixed(1) : "0.0";
+
+        return {
+            ...offer,
+            calculatedScore: parseFloat(finalScore)
+        };
+    });
+
+    // Find the Winning Offer
+    let highestScore = -1;
+    evaluatedOffers.forEach(o => {
+        if (o.calculatedScore > highestScore) {
+            highestScore = o.calculatedScore;
+        }
+    });
+
+    // Render the Comparison Report Section
+    const reportSection = document.getElementById("comparisonReport");
+    const tableContainer = document.getElementById("tableContainer");
+    if (!reportSection || !tableContainer) return;
+
+    reportSection.style.display = "block";
+
+    tableContainer.innerHTML = `
+        <p class="report-subtitle">Evaluated based on your custom preference criteria weights.</p>
+        <div class="report-grid">
+            ${evaluatedOffers.map((offer) => {
+        const isWinner = offer.calculatedScore === highestScore && highestScore > 0;
+        const cardClass = isWinner ? "report-card winning-card" : "report-card";
+        /* =================================================== */
+        /* TODO (Melkam): Add evaluated salary summary metrics */
+        /* =================================================== */
+        return `
+                    <div class="${cardClass}" ${isWinner ? 'aria-label="Top ranking winning job offer"' : ''}>
+                        ${isWinner ? '<span class="winner-badge">⭐ Top Recommendation ⭐</span>' : ''}
+                        <div class="report-score-header">
+                            <span>${offer.companyName || 'Target Company'}</span>
+                            <span class="score-badge">${offer.calculatedScore} / 10</span>
+                        </div>
+                        <div class="report-metric-row"><span class="report-metric-label">Job Title:</span> <span>${offer.jobTitle}</span></div>
+                        <div class="report-metric-row"><span class="report-metric-label">Work Mode:</span> <span>${offer.workMode}</span></div>
+                        <div class="report-metric-row"><span class="report-metric-label">PTO Days:</span> <span>${offer.vacationDays} days</span></div>
+                        <div class="report-metric-row"><span class="report-metric-label">Health Benefits:</span> <span>${offer.healthBenefits} / 10</span></div>
+                    </div>
+                `;
+    }).join('')}
+        </div>
+    `;
+
+    reportSection.scrollIntoView({ behavior: 'smooth' });
 }
