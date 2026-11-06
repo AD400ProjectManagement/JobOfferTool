@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize the comparison tool checkboxes on page load
     initComparisonTool();
@@ -74,6 +75,7 @@ function gatherAllCurrentOffers() {
 
     // Grab any additional dynamically spawned offer cards from templates
     const dynamicCards = document.querySelectorAll(".offersContainer .offerCard:not(#offer1):not(#offer2)");
+
     dynamicCards.forEach((card, index) => {
         const compName = card.querySelector(".input-company")?.value;
         if (compName) {
@@ -95,6 +97,30 @@ function gatherAllCurrentOffers() {
 
 function initComparisonTool() {
     refreshOfferCheckboxes();
+}
+
+// ========================================================
+// Melkam: Salary Comparison Feature - Currency Formatting
+// ========================================================
+
+function formatSalaryCurrency(amount) {
+    const value = Number(amount);
+
+    if (
+        amount === null ||
+        amount === undefined ||
+        amount === "" ||
+        !Number.isFinite(value) ||
+        value <= 0
+    ) {
+        return "Not provided";
+    }
+
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0
+    }).format(value);
 }
 
 function refreshOfferCheckboxes() {
@@ -148,23 +174,66 @@ function renderSideBySideComparison(selectedIndices, offers) {
     }
 
     // Map selected offers into unique scoped columns
+
     comparisonContainer.innerHTML = selectedIndices.map((offerIndex, pos) => {
         const offer = offers[offerIndex];
         if (!offer) return '';
 
         const scopedColumnId = `column-${pos + 1}`;
-        /* ======================================================== */
-        /* TODO (Melkam): Implement salary and net pay data binding */
-        /* e.g., binding annualSalary, netPayAfterRelocation,      */
-        /* currency formatting, and highest salary highlighting.    */
-        /* ======================================================== */
+
+        /* ========================================================
+           TODO (Melkam): Salary and Net Pay Comparison
+           ======================================================== */
+
+        const highestSalary = Math.max(
+            ...selectedIndices.map(index => Number(offers[index]?.salary) || 0)
+        );
+
+        const salary = Number(offer.salary) || 0;
+        const isHighestSalary = salary > 0 && salary === highestSalary;
+
+        const formatCurrency = (value) => {
+            return formatSalaryCurrency(value);
+        };
+
         return `
             <div class="comparison-column" id="${scopedColumnId}">
                 <h3>${offer.companyName}</h3>
-                <div class="comp-metric-row"><span class="comp-metric-label">Job Title:</span> <span>${offer.jobTitle}</span></div>
-                <div class="comp-metric-row"><span class="comp-metric-label">Work Mode:</span> <span>${offer.workMode}</span></div>
-                <div class="comp-metric-row"><span class="comp-metric-label">PTO Days:</span> <span>${offer.vacationDays}</span></div>
-                <div class="comp-metric-row"><span class="comp-metric-label">Health Benefits:</span> <span>${offer.healthBenefits} / 10</span></div>
+
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Job Title:</span>
+                    <span>${offer.jobTitle}</span>
+                </div>
+
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Work Mode:</span>
+                    <span>${offer.workMode}</span>
+                </div>
+
+                <!-- Melkam: Display Annual Salary and highlight the highest salary -->
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Annual Salary:</span>
+                    <span>
+                        ${formatCurrency(offer.salary)}
+                        ${isHighestSalary ? "⭐ Highest Salary" : ""}
+                    </span>
+                </div>
+
+                <!-- Melkam: Display Net Pay -->
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Net Pay:</span>
+                    <span>${formatCurrency(offer.netPay)}</span>
+                </div>
+
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">PTO Days:</span>
+                    <span>${offer.vacationDays ?? "Not provided."}</span>
+                </div>
+
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Health Benefits:</span>
+                    <span>${offer.healthBenefits ?? "Not provided."} / 10</span>
+                </div>
             </div>
         `;
     }).join('');
@@ -235,25 +304,56 @@ function runOfferEvaluation() {
         <p class="report-subtitle">Evaluated based on your custom preference criteria weights.</p>
         <div class="report-grid">
             ${evaluatedOffers.map((offer) => {
-        const isWinner = offer.calculatedScore === highestScore && highestScore > 0;
-        const cardClass = isWinner ? "report-card winning-card" : "report-card";
-        /* =================================================== */
-        /* TODO (Melkam): Add evaluated salary summary metrics */
-        /* =================================================== */
-        return `
+                const isWinner = offer.calculatedScore === highestScore && highestScore > 0;
+                const cardClass = isWinner ? "report-card winning-card" : "report-card";
+
+                /* ===================================================
+                   TODO (Melkam): Add evaluated salary summary metrics
+                   =================================================== */
+
+                return `
                     <div class="${cardClass}" ${isWinner ? 'aria-label="Top ranking winning job offer"' : ''}>
                         ${isWinner ? '<span class="winner-badge">⭐ Top Recommendation ⭐</span>' : ''}
+
                         <div class="report-score-header">
                             <span>${offer.companyName || 'Target Company'}</span>
                             <span class="score-badge">${offer.calculatedScore} / 10</span>
                         </div>
-                        <div class="report-metric-row"><span class="report-metric-label">Job Title:</span> <span>${offer.jobTitle}</span></div>
-                        <div class="report-metric-row"><span class="report-metric-label">Work Mode:</span> <span>${offer.workMode}</span></div>
-                        <div class="report-metric-row"><span class="report-metric-label">PTO Days:</span> <span>${offer.vacationDays} days</span></div>
-                        <div class="report-metric-row"><span class="report-metric-label">Health Benefits:</span> <span>${offer.healthBenefits} / 10</span></div>
+
+                        <div class="report-metric-row">
+                            <span class="report-metric-label">Job Title:</span>
+                            <span>${offer.jobTitle}</span>
+                        </div>
+
+                        <div class="report-metric-row">
+                            <span class="report-metric-label">Work Mode:</span>
+                            <span>${offer.workMode}</span>
+                        </div>
+
+                        <!-- Melkam: Display Annual Salary in the final report -->
+                        <div class="report-metric-row">
+                            <span class="report-metric-label">Annual Salary:</span>
+                            <span>${formatSalaryCurrency(offer.salary)}</span>
+                        </div>
+
+                        <!-- Melkam: Display Net Pay in the final report -->
+                        <div class="report-metric-row">
+                            <span class="report-metric-label">Net Pay:</span>
+                            <span>${formatSalaryCurrency(offer.netPay)}</span>
+                        </div>
+
+                        <div class="report-metric-row">
+                            <span class="report-metric-label">PTO Days:</span>
+                            <span>${offer.vacationDays} days</span>
+                        </div>
+
+                        <div class="report-metric-row">
+                            <span class="report-metric-label">Health Benefits:</span>
+                            <span>${offer.healthBenefits} / 10</span>
+                        </div>
                     </div>
                 `;
-    }).join('')}
+            }).join('')}
         </div>
     `;
 
