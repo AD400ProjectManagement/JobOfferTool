@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Load saved offers first
     loadSavedOffers();
+renderSavedOffers();
 
-    // Initialize the comparison tool checkboxes on page load
-    initComparisonTool();
+// Initialize the comparison tool checkboxes on page load
+initComparisonTool();
 
 
     // Save job offers to browser localStorage
@@ -28,7 +29,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     throw new Error("Invalid saved offers data.");
                 }
 
-                savedOffers.push(...offers);
+                offers.forEach((offer) => {
+    const existingIndex = savedOffers.findIndex(
+        (savedOffer) => savedOffer.id === offer.id
+    );
+
+    if (existingIndex !== -1) {
+        savedOffers[existingIndex] = offer;
+    } else {
+        savedOffers.push(offer);
+    }
+});
 
                 localStorage.setItem(
                     "savedOffers",
@@ -36,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
                 saveStatus.textContent = "Offers saved successfully!";
+                renderSavedOffers();
             } catch (error) {
                 console.error("Error saving offers:", error);
                 saveStatus.textContent = "Sorry, your offers could not be saved.";
@@ -72,21 +84,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Listen for clicks on "Add Offer" or "Remove" buttons to catch DOM updates
     document.addEventListener("click", (e) => {
-        
-        if (e.target.id === "addOfferBtn" || e.target.classList.contains("removeOfferBtn")) {
-            setTimeout(() => {
-                refreshOfferCheckboxes();
-            }, 50);
+
+    // Remove a job offer
+    if (e.target.classList.contains("removeOfferBtn")) {
+        const offerCard = e.target.closest(".offerCard");
+
+        if (offerCard) {
+            offerCard.remove();
+
+            const remainingOffers = gatherAllCurrentOffers();
+
+            localStorage.setItem(
+                "savedOffers",
+                JSON.stringify(remainingOffers)
+            );
+
+            renderSavedOffers();
+            refreshOfferCheckboxes();
         }
-    });
-});
+
+        return;
+    }
+
+    // Refresh after adding a job offer
+    if (e.target.id === "addOfferBtn") {
+        setTimeout(() => {
+            refreshOfferCheckboxes();
+        }, 50);
+    }
+});  });
+
+
 // Load saved job offers from browser localStorage
 function loadSavedOffers() {
     try {
-        const savedOffers = JSON.parse(
-            localStorage.getItem("savedOffers") || "[]"
-        );
+        const savedOffersData = JSON.parse(
+    localStorage.getItem("savedOffers") || "[]"
+);
 
+const savedOffers = [
+    ...new Map(savedOffersData.map(offer => [offer.id, offer])).values()
+];
         if (!Array.isArray(savedOffers)) {
             throw new Error("Invalid saved offers data.");
         }
@@ -120,7 +158,49 @@ function loadSavedOffers() {
         console.error("Error loading saved offers:", error);
     }
 }
+// Display all saved job offers on the page
+function renderSavedOffers() {
+    const savedOffersList = document.getElementById("savedOffersList");
 
+    if (!savedOffersList) return;
+
+    try {
+        const savedOffers = JSON.parse(
+            localStorage.getItem("savedOffers") || "[]"
+        );
+
+        savedOffersList.innerHTML = "";
+
+        if (!Array.isArray(savedOffers) || savedOffers.length === 0) {
+            savedOffersList.textContent = "No saved job offers yet.";
+            return;
+        }
+
+        savedOffers.forEach((offer) => {
+            const offerCard = document.createElement("div");
+            offerCard.className = "saved-offer-card";
+
+            const company = document.createElement("h3");
+            company.textContent = offer.companyName || "Unknown Company";
+
+            const title = document.createElement("p");
+            title.textContent = "Job Title: " + (offer.jobTitle || "Not provided");
+
+            const salary = document.createElement("p");
+            salary.textContent = "Salary: " + formatSalaryCurrency(offer.salary);
+
+            offerCard.appendChild(company);
+            offerCard.appendChild(title);
+            offerCard.appendChild(salary);
+
+            savedOffersList.appendChild(offerCard);
+        });
+
+    } catch (error) {
+        console.error("Error displaying saved offers:", error);
+        savedOffersList.textContent = "Unable to display saved job offers.";
+    }
+}
 function gatherAllCurrentOffers() {
     const offers = [];
 

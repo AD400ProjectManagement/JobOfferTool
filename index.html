@@ -38,7 +38,10 @@
             <div class="offersContainer">
                 <!-- Job Offer One Form -->
                 <section class="offerCard" id="offer1">
-                    <h3>Job Offer One</h3>
+                   <div class="cardHeader">
+    <h3>Job Offer One</h3>
+    <button type="button" class="removeOfferBtn">Remove</button>
+</div>
 
                     <label for="companyName1">Company Name</label>
                     <input type="text" id="companyName1" placeholder="e.g. Amazon Web Solutions" required>
@@ -78,7 +81,10 @@
 
                 <!-- Job Offer Two Form -->
                 <section class="offerCard" id="offer2">
-                    <h3>Job Offer Two</h3>
+                   <div class="cardHeader">
+    <h3>Job Offer Two</h3>
+    <button type="button" class="removeOfferBtn">Remove</button>
+</div>
 
                     <label for="companyName2">Company Name</label>
                     <input type="text" id="companyName2" placeholder="e.g. Globex Inc" required>
@@ -132,6 +138,14 @@
 
 <p id="saveStatus" role="status" aria-live="polite"></p>
         </form>
+        <!-- Saved Job Offers -->
+<section id="savedOffersSection">
+    <h2>My Saved Job Offers</h2>
+
+    <div id="savedOffersList">
+        <p>No saved job offers yet.</p>
+    </div>
+</section>
 
         <!-- Side-by-Side Comparison -->
         <section id="sideBySideComparison" class="comparison-section-wrapper">
