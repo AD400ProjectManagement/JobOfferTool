@@ -52,7 +52,7 @@ function gatherAllCurrentOffers() {
             jobTitle: document.getElementById("jobTitle1")?.value || "N/A",
             salary: document.getElementById("salary1")?.value || 0,
             workMode: document.getElementById("workMode1")?.value || "N/A",
-            vacationDays: document.getElementById("vacationDays1")?.value || 0,
+            vacationDays: document.getElementById("vacationDays1")?.value || "",
             healthBenefits: document.getElementById("healthBenefits1")?.value || 0,
             netPay: document.getElementById("netPayAfterRelocation1")?.value || "N/A"
         });
@@ -67,7 +67,7 @@ function gatherAllCurrentOffers() {
             jobTitle: document.getElementById("jobTitle2")?.value || "N/A",
             salary: document.getElementById("salary2")?.value || 0,
             workMode: document.getElementById("workMode2")?.value || "N/A",
-            vacationDays: document.getElementById("vacationDays2")?.value || 0,
+            vacationDays: document.getElementById("vacationDays2")?.value || "",
             healthBenefits: document.getElementById("healthBenefits2")?.value || 0,
             netPay: document.getElementById("netPayAfterRelocation2")?.value || "N/A"
         });
@@ -85,7 +85,7 @@ function gatherAllCurrentOffers() {
                 jobTitle: card.querySelector(".input-title")?.value || "N/A",
                 salary: card.querySelector(".input-salary")?.value || 0,
                 workMode: card.querySelector(".input-workmode")?.value || "N/A",
-                vacationDays: card.querySelector(".input-vacation")?.value || 0,
+                vacationDays: card.querySelector(".input-vacation")?.value || "",
                 healthBenefits: card.querySelector(".input-benefits")?.value || 0,
                 netPay: card.querySelector(".input-netpay")?.value || "N/A"
             });
@@ -121,6 +121,18 @@ function formatSalaryCurrency(amount) {
         currency: "USD",
         maximumFractionDigits: 0
     }).format(value);
+}
+
+// ========================================================
+// Melkam: PTO Comparison Feature - Missing Data Formatting
+// ========================================================
+
+function formatPtoDays(days) {
+    if (days === null || days === undefined || String(days).trim() === "") {
+        return "Not provided.";
+    }
+
+    return `${days} days`;
 }
 
 function refreshOfferCheckboxes() {
@@ -225,9 +237,10 @@ function renderSideBySideComparison(selectedIndices, offers) {
                     <span>${formatCurrency(offer.netPay)}</span>
                 </div>
 
+                <!-- Melkam: Display PTO days with missing-data fallback -->
                 <div class="comp-metric-row">
                     <span class="comp-metric-label">PTO Days:</span>
-                    <span>${offer.vacationDays ?? "Not provided."}</span>
+                    <span>${formatPtoDays(offer.vacationDays)}</span>
                 </div>
 
                 <div class="comp-metric-row">
@@ -342,9 +355,10 @@ function runOfferEvaluation() {
                             <span>${formatSalaryCurrency(offer.netPay)}</span>
                         </div>
 
+                        <!-- Melkam: Display PTO days in the final report -->
                         <div class="report-metric-row">
                             <span class="report-metric-label">PTO Days:</span>
-                            <span>${offer.vacationDays} days</span>
+                            <span>${formatPtoDays(offer.vacationDays)}</span>
                         </div>
 
                         <div class="report-metric-row">
