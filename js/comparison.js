@@ -1,7 +1,47 @@
-
 document.addEventListener("DOMContentLoaded", () => {
+    // Load saved offers first
+    loadSavedOffers();
+
     // Initialize the comparison tool checkboxes on page load
     initComparisonTool();
+
+
+    // Save job offers to browser localStorage
+    const saveOfferBtn = document.getElementById("saveOfferBtn");
+    const saveStatus = document.getElementById("saveStatus");
+
+    if (saveOfferBtn && saveStatus) {
+        saveOfferBtn.addEventListener("click", () => {
+            try {
+                const offers = gatherAllCurrentOffers();
+
+                if (offers.length === 0) {
+                    saveStatus.textContent = "Please enter at least one job offer.";
+                    return;
+                }
+
+                const savedOffers = JSON.parse(
+                    localStorage.getItem("savedOffers") || "[]"
+                );
+
+                if (!Array.isArray(savedOffers)) {
+                    throw new Error("Invalid saved offers data.");
+                }
+
+                savedOffers.push(...offers);
+
+                localStorage.setItem(
+                    "savedOffers",
+                    JSON.stringify(savedOffers)
+                );
+
+                saveStatus.textContent = "Offers saved successfully!";
+            } catch (error) {
+                console.error("Error saving offers:", error);
+                saveStatus.textContent = "Sorry, your offers could not be saved.";
+            }
+        });
+    }
 
     // Form interactions & changes to update selection list and live re-calculate report
     const form = document.getElementById("evaluationForm");
@@ -32,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Listen for clicks on "Add Offer" or "Remove" buttons to catch DOM updates
     document.addEventListener("click", (e) => {
+        
         if (e.target.id === "addOfferBtn" || e.target.classList.contains("removeOfferBtn")) {
             setTimeout(() => {
                 refreshOfferCheckboxes();
@@ -39,6 +80,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+// Load saved job offers from browser localStorage
+function loadSavedOffers() {
+    try {
+        const savedOffers = JSON.parse(
+            localStorage.getItem("savedOffers") || "[]"
+        );
+
+        if (!Array.isArray(savedOffers)) {
+            throw new Error("Invalid saved offers data.");
+        }
+
+        ["offer1", "offer2"].forEach((offerId) => {
+            const offer = [...savedOffers]
+                .reverse()
+                .find(item => item.id === offerId);
+
+            if (!offer) return;
+
+            const number = offerId === "offer1" ? "1" : "2";
+
+            const fields = [
+                [`companyName${number}`, offer.companyName],
+                [`jobTitle${number}`, offer.jobTitle],
+                [`salary${number}`, offer.salary],
+                [`workMode${number}`, offer.workMode],
+                [`vacationDays${number}`, offer.vacationDays],
+                [`healthBenefits${number}`, offer.healthBenefits],
+                [`netPayAfterRelocation${number}`, offer.netPay]
+            ];
+
+            fields.forEach(([id, value]) => {
+                const field = document.getElementById(id);
+                if (field) field.value = value ?? "";
+            });
+        });
+
+    } catch (error) {
+        console.error("Error loading saved offers:", error);
+    }
+}
 
 function gatherAllCurrentOffers() {
     const offers = [];
