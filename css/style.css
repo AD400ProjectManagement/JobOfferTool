@@ -346,3 +346,39 @@ button:hover {
     font-weight: 600;
     color: #4a5568;
 }
+/* Saved Job Offer Cards */
+.saved-offer-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.saved-offer-card h3 {
+    color: #d63384;
+    margin-bottom: 12px;
+}
+
+.saved-offer-card p {
+    margin: 8px 0;
+}
+
+.saved-offer-card button {
+    padding: 9px 18px;
+    margin: 10px 8px 0 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.editSavedOfferBtn {
+    background-color: #d63384;
+    color: white;
+}
+
+.deleteSavedOfferBtn {
+    background-color: #dc3545;
+    color: white;
+}
