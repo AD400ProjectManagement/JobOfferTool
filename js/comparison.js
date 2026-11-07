@@ -98,9 +98,39 @@ document.addEventListener("DOMContentLoaded", () => {
             runOfferEvaluation();
         });
     }
-// Show or hide the offer dropdown
-const addOfferBtn = document.getElementById("addOfferBtn");
-const offerDropdown = document.getElementById("offerDropdown");
+
+    // Export the comparison report as a text file
+const exportBtn = document.getElementById("exportBtn");
+
+if (exportBtn) {
+    exportBtn.addEventListener("click", () => {
+        const reportSection = document.getElementById("comparisonReport");
+
+        if (!reportSection || !reportSection.innerText.trim()) {
+            alert("Please evaluate your offers before exporting the report.");
+            return;
+        }
+
+        const reportText = reportSection.innerText;
+
+        const blob = new Blob([reportText], {
+            type: "text/plain"
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "job-offer-comparison-report.txt";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+    });
+}
+>>>>>>> 12d40c0 (Add export comparison report feature)
 
 if (addOfferBtn && offerDropdown) {
     addOfferBtn.addEventListener("click", () => {
