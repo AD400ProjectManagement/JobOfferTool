@@ -130,7 +130,7 @@ if (exportBtn) {
         URL.revokeObjectURL(url);
     });
 }
->>>>>>> 12d40c0 (Add export comparison report feature)
+ 
 
 if (addOfferBtn && offerDropdown) {
     addOfferBtn.addEventListener("click", () => {
