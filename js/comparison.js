@@ -98,7 +98,51 @@ document.addEventListener("DOMContentLoaded", () => {
             runOfferEvaluation();
         });
     }
+// Show or hide the offer dropdown
+const addOfferBtn = document.getElementById("addOfferBtn");
+const offerDropdown = document.getElementById("offerDropdown");
 
+if (addOfferBtn && offerDropdown) {
+    addOfferBtn.addEventListener("click", () => {
+        offerDropdown.style.display =
+            offerDropdown.style.display === "none" ? "block" : "none";
+    });
+
+    offerDropdown.addEventListener("change", () => {
+        const offerNumber = offerDropdown.value;
+
+        if (!offerNumber) return;
+
+        const template = document.getElementById("offerTemplate");
+        const container = document.querySelector(".offersContainer");
+
+        const newOffer = template.content.cloneNode(true);
+        const offerCard = newOffer.querySelector(".offerCard");
+
+        offerCard.id = `dynamicOffer${offerNumber}`;
+
+        offerCard.querySelector(".offerTitle").textContent =
+            `Job Offer ${offerNumber}`;
+
+        offerCard.querySelector(".radio-yes").name =
+            `relocation${offerNumber}`;
+
+        offerCard.querySelector(".radio-no").name =
+            `relocation${offerNumber}`;
+
+        container.appendChild(newOffer);
+
+        // Remove the selected option so it cannot be added twice
+        offerDropdown.querySelector(
+            `option[value="${offerNumber}"]`
+        ).remove();
+
+        offerDropdown.value = "";
+        offerDropdown.style.display = "none";
+
+        refreshOfferCheckboxes();
+    });
+}
     // Handle Edit, Delete, Add, and Remove buttons
     document.addEventListener("click", (e) => {
 
@@ -159,16 +203,25 @@ if (e.target.classList.contains("deleteSavedOfferBtn")) {
         }
 
         // Remove a job offer
-        if (e.target.classList.contains("removeOfferBtn")) {
-            const offerCard = e.target.closest(".offerCard");
+       // Remove additional job offers only
+if (e.target.classList.contains("removeOfferBtn")) {
+    const offerCard = e.target.closest(".offerCard");
 
-            if (offerCard) {
-                offerCard.remove();
-                refreshOfferCheckboxes();
-            }
+    if (offerCard) {
 
+        // Keep the first two required offers
+        if (offerCard.id === "offer1" || offerCard.id === "offer2") {
             return;
         }
+
+        // Remove additional offers only
+        offerCard.remove();
+
+        refreshOfferCheckboxes();
+    }
+
+    return;
+}
 
         // Refresh after adding a job offer
         if (e.target.id === "addOfferBtn") {
