@@ -430,8 +430,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-});
-
 /* ========================================================
    GATHER CURRENT JOB OFFERS
    ======================================================== */
@@ -715,9 +713,19 @@ function renderSideBySideComparison(selectedIndices, offers) {
                         <span>${formatTextFallback(offer.employerMatch)}</span>
                     </div>
                 </div>
-            `;
 
-        }).join("");
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Retirement Plan:</span>
+                    <span>${formatTextFallback(offer.retirementPlan)}</span>
+                </div>
+
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Employer Match:</span>
+                    <span>${formatTextFallback(offer.employerMatch)}</span>
+                </div>
+            </div>
+        `;
+    }).join("");
 }
 
 /* ========================================================
