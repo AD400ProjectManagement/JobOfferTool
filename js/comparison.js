@@ -300,6 +300,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         `workMode${number}`,
                         `vacationDays${number}`,
                         `healthBenefits${number}`,
+                        `retirementPlan${number}`,
+                        `employerMatch${number}`,
                         `netPayAfterRelocation${number}`
                     ];
 
@@ -430,6 +432,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+});
+
 /* ========================================================
    GATHER CURRENT JOB OFFERS
    ======================================================== */
@@ -455,7 +459,7 @@ function gatherAllCurrentOffers() {
         });
     }
 
-    // Grab Offer 2
+    // Offer 2
     const comp2 = document.getElementById("companyName2")?.value;
 
     if (comp2) {
@@ -473,7 +477,7 @@ function gatherAllCurrentOffers() {
         });
     }
 
-    // Grab additional dynamically created offer cards
+    // Additional dynamic offers
     const dynamicCards = document.querySelectorAll(
         ".offersContainer .offerCard:not(#offer1):not(#offer2)"
     );
@@ -639,79 +643,67 @@ function renderSideBySideComparison(selectedIndices, offers) {
         return;
     }
 
-    comparisonContainer.innerHTML = selectedIndices.map(
-        (offerIndex, pos) => {
-            const offer = offers[offerIndex];
+    const formatCurrency = (value) => {
+        return formatSalaryCurrency(value);
+    };
 
-            if (!offer) return "";
+    const formatTextFallback = (text) => {
+        return text && text.trim() !== "" ? text : "Not provided";
+    };
 
-            const scopedColumnId = `column-${pos + 1}`;
+    comparisonContainer.innerHTML = selectedIndices.map((offerIndex, pos) => {
+        const offer = offers[offerIndex];
 
-            const highestSalary = Math.max(
-                ...selectedIndices.map(
-                    index => Number(offers[index]?.salary) || 0
-                )
-            );
+        if (!offer) return "";
 
-            const salary = Number(offer.salary) || 0;
+        const scopedColumnId = `column-${pos + 1}`;
 
-            const isHighestSalary =
-                salary > 0 && salary === highestSalary;
+        const highestSalary = Math.max(
+            ...selectedIndices.map(
+                index => Number(offers[index]?.salary) || 0
+            )
+        );
 
-            const formatCurrency = (value) => {
-                return formatSalaryCurrency(value);
-            };
+        const salary = Number(offer.salary) || 0;
 
-            const formatTextFallback = (text) => {
-                return text && text.trim() !== "" ? text : "Not provided";
-            };
+        const isHighestSalary =
+            salary > 0 && salary === highestSalary;
 
-            return `
-                <div class="comparison-column" id="${scopedColumnId}">
-                    <h3>${offer.companyName}</h3>
+        return `
+            <div class="comparison-column" id="${scopedColumnId}">
+                <h3>${offer.companyName}</h3>
 
-                    <div class="comp-metric-row">
-                        <span class="comp-metric-label">Job Title:</span>
-                        <span>${offer.jobTitle}</span>
-                    </div>
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Job Title:</span>
+                    <span>${offer.jobTitle}</span>
+                </div>
 
-                    <div class="comp-metric-row">
-                        <span class="comp-metric-label">Work Mode:</span>
-                        <span>${offer.workMode}</span>
-                    </div>
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Work Mode:</span>
+                    <span>${offer.workMode}</span>
+                </div>
 
-                    <div class="comp-metric-row">
-                        <span class="comp-metric-label">Annual Salary:</span>
-                        <span>
-                            ${formatCurrency(offer.salary)}
-                            ${isHighestSalary ? "⭐ Highest Salary" : ""}
-                        </span>
-                    </div>
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Annual Salary:</span>
+                    <span>
+                        ${formatCurrency(offer.salary)}
+                        ${isHighestSalary ? "⭐ Highest Salary" : ""}
+                    </span>
+                </div>
 
-                    <div class="comp-metric-row">
-                        <span class="comp-metric-label">Net Pay:</span>
-                        <span>${formatCurrency(offer.netPay)}</span>
-                    </div>
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Net Pay:</span>
+                    <span>${formatCurrency(offer.netPay)}</span>
+                </div>
 
-                    <div class="comp-metric-row">
-                        <span class="comp-metric-label">PTO Days:</span>
-                        <span>${formatPtoDays(offer.vacationDays)}</span>
-                    </div>
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">PTO Days:</span>
+                    <span>${formatPtoDays(offer.vacationDays)}</span>
+                </div>
 
-                    <div class="comp-metric-row">
-                        <span class="comp-metric-label">Health Benefits:</span>
-                        <span>${offer.healthBenefits ?? "Not provided."} / 10</span>
-                    </div>
-
-                    <div class="comp-metric-row">
-                        <span class="comp-metric-label">Retirement Plan:</span>
-                        <span>${formatTextFallback(offer.retirementPlan)}</span>
-                    </div>
-
-                    <div class="comp-metric-row">
-                        <span class="comp-metric-label">Employer Match:</span>
-                        <span>${formatTextFallback(offer.employerMatch)}</span>
-                    </div>
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Health Benefits:</span>
+                    <span>${offer.healthBenefits ?? "Not provided."} / 10</span>
                 </div>
 
                 <div class="comp-metric-row">
