@@ -1,4 +1,3 @@
-
 /* ========================================================
    SAVED JOB OFFERS
    ======================================================== */
@@ -49,7 +48,6 @@ function renderSavedOffers() {
     }
 }
 
-
 // Load saved job offers into the form
 function loadSavedOffers() {
     try {
@@ -77,6 +75,8 @@ function loadSavedOffers() {
                 [`workMode${number}`, offer.workMode],
                 [`vacationDays${number}`, offer.vacationDays],
                 [`healthBenefits${number}`, offer.healthBenefits],
+                [`retirementPlan${number}`, offer.retirementPlan],
+                [`employerMatch${number}`, offer.employerMatch],
                 [`netPayAfterRelocation${number}`, offer.netPay]
             ];
 
@@ -94,7 +94,6 @@ function loadSavedOffers() {
     }
 }
 
-
 /* ========================================================
    PAGE INITIALIZATION AND EVENT LISTENERS
    ======================================================== */
@@ -107,7 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize comparison checkboxes
     initComparisonTool();
-
 
     // Save job offers to browser localStorage
     const saveOfferBtn = document.getElementById("saveOfferBtn");
@@ -159,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
     // Form interactions and live updates
     const form = document.getElementById("evaluationForm");
 
@@ -180,17 +177,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
     // Evaluate button click handler
     const evaluateBtn = document.getElementById("evaluateBtn");
 
     if (evaluateBtn) {
         evaluateBtn.addEventListener("click", (e) => {
             e.preventDefault();
+            console.log("Evaluate button clicked!");
+            const offers = gatherAllCurrentOffers();
+            console.log("Gathered offers:", offers);
             runOfferEvaluation();
         });
     }
-
 
     // Listen for Add Offer and Remove button clicks
     document.addEventListener("click", (e) => {
@@ -205,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
-
 
 /* ========================================================
    GATHER CURRENT JOB OFFERS
@@ -226,10 +223,11 @@ function gatherAllCurrentOffers() {
             workMode: document.getElementById("workMode1")?.value || "N/A",
             vacationDays: document.getElementById("vacationDays1")?.value || "",
             healthBenefits: document.getElementById("healthBenefits1")?.value || 0,
+            retirementPlan: document.getElementById("retirementPlan1")?.value || "",
+            employerMatch: document.getElementById("employerMatch1")?.value || "",
             netPay: document.getElementById("netPayAfterRelocation1")?.value || "N/A"
         });
     }
-
 
     // Grab Offer 2
     const comp2 = document.getElementById("companyName2")?.value;
@@ -243,10 +241,11 @@ function gatherAllCurrentOffers() {
             workMode: document.getElementById("workMode2")?.value || "N/A",
             vacationDays: document.getElementById("vacationDays2")?.value || "",
             healthBenefits: document.getElementById("healthBenefits2")?.value || 0,
+            retirementPlan: document.getElementById("retirementPlan2")?.value || "",
+            employerMatch: document.getElementById("employerMatch2")?.value || "",
             netPay: document.getElementById("netPayAfterRelocation2")?.value || "N/A"
         });
     }
-
 
     // Grab additional dynamically created offer cards
     const dynamicCards = document.querySelectorAll(
@@ -265,6 +264,8 @@ function gatherAllCurrentOffers() {
                 workMode: card.querySelector(".input-workmode")?.value || "N/A",
                 vacationDays: card.querySelector(".input-vacation")?.value || "",
                 healthBenefits: card.querySelector(".input-benefits")?.value || 0,
+                retirementPlan: card.querySelector(".input-retirement")?.value || "",
+                employerMatch: card.querySelector(".input-match")?.value || "",
                 netPay: card.querySelector(".input-netpay")?.value || "N/A"
             });
         }
@@ -273,7 +274,6 @@ function gatherAllCurrentOffers() {
     return offers;
 }
 
-
 /* ========================================================
    INITIALIZE COMPARISON TOOL
    ======================================================== */
@@ -281,7 +281,6 @@ function gatherAllCurrentOffers() {
 function initComparisonTool() {
     refreshOfferCheckboxes();
 }
-
 
 /* ========================================================
    MELKAM: SALARY COMPARISON - CURRENCY FORMATTING
@@ -307,7 +306,6 @@ function formatSalaryCurrency(amount) {
     }).format(value);
 }
 
-
 /* ========================================================
    MELKAM: PTO COMPARISON - MISSING DATA FORMATTING
    ======================================================== */
@@ -323,7 +321,6 @@ function formatPtoDays(days) {
 
     return `${days} days`;
 }
-
 
 /* ========================================================
    REFRESH OFFER CHECKBOXES
@@ -371,7 +368,6 @@ function refreshOfferCheckboxes() {
     handleSelectionChange();
 }
 
-
 /* ========================================================
    HANDLE OFFER SELECTION
    ======================================================== */
@@ -389,7 +385,6 @@ function handleSelectionChange() {
 
     renderSideBySideComparison(selectedIndices, offers);
 }
-
 
 /* ========================================================
    RENDER SIDE-BY-SIDE COMPARISON
@@ -439,6 +434,10 @@ function renderSideBySideComparison(selectedIndices, offers) {
             return formatSalaryCurrency(value);
         };
 
+        const formatTextFallback = (text) => {
+            return text && text.trim() !== "" ? text : "Not provided";
+        };
+
         return `
             <div class="comparison-column" id="${scopedColumnId}">
                 <h3>${offer.companyName}</h3>
@@ -453,7 +452,6 @@ function renderSideBySideComparison(selectedIndices, offers) {
                     <span>${offer.workMode}</span>
                 </div>
 
-                <!-- Melkam: Display Annual Salary and highlight highest salary -->
                 <div class="comp-metric-row">
                     <span class="comp-metric-label">Annual Salary:</span>
                     <span>
@@ -462,13 +460,11 @@ function renderSideBySideComparison(selectedIndices, offers) {
                     </span>
                 </div>
 
-                <!-- Melkam: Display Net Pay -->
                 <div class="comp-metric-row">
                     <span class="comp-metric-label">Net Pay:</span>
                     <span>${formatCurrency(offer.netPay)}</span>
                 </div>
 
-                <!-- Melkam: Display PTO days -->
                 <div class="comp-metric-row">
                     <span class="comp-metric-label">PTO Days:</span>
                     <span>${formatPtoDays(offer.vacationDays)}</span>
@@ -478,11 +474,20 @@ function renderSideBySideComparison(selectedIndices, offers) {
                     <span class="comp-metric-label">Health Benefits:</span>
                     <span>${offer.healthBenefits ?? "Not provided."} / 10</span>
                 </div>
+
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Retirement Plan:</span>
+                    <span>${formatTextFallback(offer.retirementPlan)}</span>
+                </div>
+
+                <div class="comp-metric-row">
+                    <span class="comp-metric-label">Employer Match:</span>
+                    <span>${formatTextFallback(offer.employerMatch)}</span>
+                </div>
             </div>
         `;
     }).join("");
 }
-
 
 /* ========================================================
    RUN JOB OFFER EVALUATION
@@ -504,7 +509,6 @@ function runOfferEvaluation() {
         vacation: parseFloat(document.getElementById("vacationWeight")?.value) || 5
     };
 
-
     // Compute weighted scores for each offer
     const evaluatedOffers = offers.map(offer => {
         const salaryVal = parseFloat(offer.salary) || 0;
@@ -513,7 +517,14 @@ function runOfferEvaluation() {
         const ptoVal = parseFloat(offer.vacationDays) || 0;
         const ptoScore = (ptoVal / 25) * 10;
 
-        const benefitVal = parseFloat(offer.healthBenefits) || 5;
+        const healthVal = parseFloat(offer.healthBenefits) || 5;
+
+        const matchStr = offer.employerMatch || "";
+        const matchMatch = matchStr.match(/(\d+(\.\d+)?)/);
+        const matchVal = matchMatch ? parseFloat(matchMatch[0]) : 0;
+        const retirementScore = Math.min(matchVal * 2, 10) || (offer.retirementPlan ? 7 : 4);
+
+        const combinedBenefitsScore = (healthVal + retirementScore) / 2;
 
         let workModeScore = 5;
 
@@ -534,7 +545,7 @@ function runOfferEvaluation() {
         const weightedSum =
             (salaryScore * weights.salary) +
             (workModeScore * weights.workMode) +
-            (benefitVal * weights.benefits) +
+            (combinedBenefitsScore * weights.benefits) +
             (ptoScore * weights.vacation);
 
         const finalScore = totalWeight > 0
@@ -547,7 +558,6 @@ function runOfferEvaluation() {
         };
     });
 
-
     // Find the winning offer
     let highestScore = -1;
 
@@ -556,7 +566,6 @@ function runOfferEvaluation() {
             highestScore = offer.calculatedScore;
         }
     });
-
 
     // Render the comparison report
     const reportSection = document.getElementById("comparisonReport");
@@ -573,20 +582,26 @@ function runOfferEvaluation() {
 
         <div class="report-grid">
             ${evaluatedOffers.map((offer) => {
-                const isWinner =
-                    offer.calculatedScore === highestScore && highestScore > 0;
+        const isWinner =
+            offer.calculatedScore === highestScore && highestScore > 0;
 
-                const cardClass = isWinner
-                    ? "report-card winning-card"
-                    : "report-card";
+        const cardClass = isWinner
+            ? "report-card winning-card"
+            : "report-card";
 
-                return `
+        const formatTextFallback = (text) => {
+            if (text === null || text === undefined) return "Not provided.";
+            const str = String(text).trim();
+            return str !== "" ? str : "Not provided.";
+        };
+
+        return `
                     <div class="${cardClass}"
                         ${isWinner ? 'aria-label="Top ranking winning job offer"' : ""}>
 
                         ${isWinner
-                            ? '<span class="winner-badge">⭐ Top Recommendation ⭐</span>'
-                            : ""}
+                ? '<span class="winner-badge">⭐ Top Recommendation ⭐</span>'
+                : ""}
 
                         <div class="report-score-header">
                             <span>${offer.companyName || "Target Company"}</span>
@@ -605,19 +620,16 @@ function runOfferEvaluation() {
                             <span>${offer.workMode}</span>
                         </div>
 
-                        <!-- Melkam: Display Annual Salary -->
                         <div class="report-metric-row">
                             <span class="report-metric-label">Annual Salary:</span>
                             <span>${formatSalaryCurrency(offer.salary)}</span>
                         </div>
 
-                        <!-- Melkam: Display Net Pay -->
                         <div class="report-metric-row">
                             <span class="report-metric-label">Net Pay:</span>
                             <span>${formatSalaryCurrency(offer.netPay)}</span>
                         </div>
 
-                        <!-- Melkam: Display PTO days -->
                         <div class="report-metric-row">
                             <span class="report-metric-label">PTO Days:</span>
                             <span>${formatPtoDays(offer.vacationDays)}</span>
@@ -627,9 +639,19 @@ function runOfferEvaluation() {
                             <span class="report-metric-label">Health Benefits:</span>
                             <span>${offer.healthBenefits} / 10</span>
                         </div>
+
+                        <div class="report-metric-row">
+                            <span class="report-metric-label">Retirement Plan:</span>
+                            <span>${formatTextFallback(offer.retirementPlan)}</span>
+                        </div>
+
+                        <div class="report-metric-row">
+                            <span class="report-metric-label">Employer Match:</span>
+                            <span>${formatTextFallback(offer.employerMatch)}</span>
+                        </div>
                     </div>
                 `;
-            }).join("")}
+    }).join("")}
         </div>
     `;
 

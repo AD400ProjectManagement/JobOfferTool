@@ -265,7 +265,8 @@ button:hover {
 
 /* Comparison Report & Scoring Results */
 #comparisonReport {
-    display: none; /* Toggled on by JS when evaluation runs */
+    display: none;
+    /* Toggled on by JS when evaluation runs */
     background: #ffffff;
     border-radius: 8px;
     padding: 1.5rem;
