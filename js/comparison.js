@@ -183,6 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (evaluateBtn) {
         evaluateBtn.addEventListener("click", (e) => {
             e.preventDefault();
+            console.log("Evaluate button clicked!");
+            const offers = gatherAllCurrentOffers();
+            console.log("Gathered offers:", offers);
             runOfferEvaluation();
         });
     }
@@ -542,7 +545,7 @@ function runOfferEvaluation() {
         const weightedSum =
             (salaryScore * weights.salary) +
             (workModeScore * weights.workMode) +
-            (benefitVal * weights.benefits) +
+            (combinedBenefitsScore * weights.benefits) +
             (ptoScore * weights.vacation);
 
         const finalScore = totalWeight > 0
@@ -587,7 +590,9 @@ function runOfferEvaluation() {
             : "report-card";
 
         const formatTextFallback = (text) => {
-            return text && text.trim() !== "" ? text : "Not provided.";
+            if (text === null || text === undefined) return "Not provided.";
+            const str = String(text).trim();
+            return str !== "" ? str : "Not provided.";
         };
 
         return `
