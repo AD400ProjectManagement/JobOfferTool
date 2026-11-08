@@ -36,16 +36,31 @@ function renderSavedOffers() {
             const salary = document.createElement("p");
             salary.textContent = "Salary: " + formatSalaryCurrency(offer.salary);
 
+            const editButton = document.createElement("button");
+            editButton.type = "button";
+            editButton.textContent = "Edit";
+            editButton.className = "edit-offer-btn";
+            editButton.dataset.offerId = offer.id;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.textContent = "Delete";
+            deleteButton.className = "delete-offer-btn";
+            deleteButton.dataset.offerId = offer.id;
+
             offerCard.appendChild(company);
             offerCard.appendChild(title);
             offerCard.appendChild(salary);
+            offerCard.appendChild(editButton);
+            offerCard.appendChild(deleteButton);
 
             savedOffersList.appendChild(offerCard);
         });
 
     } catch (error) {
         console.error("Error displaying saved offers:", error);
-        savedOffersList.textContent = "Unable to display saved job offers.";
+        savedOffersList.textContent =
+            "Unable to display saved job offers.";
     }
 }
 
@@ -101,7 +116,7 @@ function loadSavedOffers() {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Load and display saved offers when the page opens
+    // Load and display saved offers
     loadSavedOffers();
     renderSavedOffers();
 
@@ -109,17 +124,212 @@ document.addEventListener("DOMContentLoaded", () => {
     initComparisonTool();
 
 
-    // Save job offers to browser localStorage
+    // Handle Edit and Delete buttons
+    document.addEventListener("click", (e) => {
+
+        // EDIT BUTTON
+        const editButton = e.target.closest(".edit-offer-btn");
+
+        if (editButton) {
+            const offerId = editButton.dataset.offerId;
+
+            const savedOffers = JSON.parse(
+                localStorage.getItem("savedOffers") || "[]"
+            );
+
+            const offer = savedOffers.find(
+                item => item.id === offerId
+            );
+
+            if (!offer) return;
+
+            // Edit Offer 1 or Offer 2
+            const number = offerId === "offer1" ? "1" :
+                           offerId === "offer2" ? "2" : null;
+
+            if (number) {
+                document.getElementById(`companyName${number}`).value =
+                    offer.companyName || "";
+
+                document.getElementById(`jobTitle${number}`).value =
+                    offer.jobTitle || "";
+
+                document.getElementById(`salary${number}`).value =
+                    offer.salary || "";
+
+                document.getElementById(`workMode${number}`).value =
+                    offer.workMode || "";
+
+                document.getElementById(`vacationDays${number}`).value =
+                    offer.vacationDays || "";
+
+                document.getElementById(`healthBenefits${number}`).value =
+                    offer.healthBenefits || "";
+
+                document.getElementById(
+                    `netPayAfterRelocation${number}`
+                ).value = offer.netPay || "";
+
+            } else {
+                const dynamicNumber = parseInt(
+                    offerId.replace("dynamicOffer", ""),
+                    10
+                );
+
+                const dynamicCards = document.querySelectorAll(
+                    ".offersContainer .offerCard:not(#offer1):not(#offer2)"
+                );
+
+                const card = dynamicCards[dynamicNumber - 3];
+
+                if (!card) return;
+
+                card.querySelector(".input-company").value =
+                    offer.companyName || "";
+
+                card.querySelector(".input-title").value =
+                    offer.jobTitle || "";
+
+                card.querySelector(".input-salary").value =
+                    offer.salary || "";
+
+                card.querySelector(".input-workmode").value =
+                    offer.workMode || "";
+
+                card.querySelector(".input-vacation").value =
+                    offer.vacationDays || "";
+
+                card.querySelector(".input-benefits").value =
+                    offer.healthBenefits || "";
+
+                card.querySelector(".input-netpay").value =
+                    offer.netPay || "";
+            }
+
+            const form = document.getElementById("evaluationForm");
+
+            if (form) {
+                form.scrollIntoView({ behavior: "smooth" });
+            }
+
+            refreshOfferCheckboxes();
+
+            return;
+        }
+
+
+        // DELETE BUTTON
+        const deleteButton = e.target.closest(".delete-offer-btn");
+
+        if (deleteButton) {
+            const offerId = deleteButton.dataset.offerId;
+
+            const offerCard = deleteButton.closest(".saved-offer-card");
+
+            if (!offerCard) return;
+
+            // Remove an old confirmation message
+            const oldMessage = offerCard.querySelector(
+                ".delete-confirmation"
+            );
+
+            if (oldMessage) oldMessage.remove();
+
+            // Create confirmation message inside the website
+            const message = document.createElement("div");
+            message.className = "delete-confirmation";
+
+            const question = document.createElement("p");
+            question.textContent =
+                "Are you sure you want to delete this job offer?";
+
+            const yesButton = document.createElement("button");
+            yesButton.type = "button";
+            yesButton.textContent = "Yes, Delete";
+            yesButton.className = "confirm-delete-btn";
+
+            const cancelButton = document.createElement("button");
+            cancelButton.type = "button";
+            cancelButton.textContent = "Cancel";
+            cancelButton.className = "cancel-delete-btn";
+
+            message.appendChild(question);
+            message.appendChild(yesButton);
+            message.appendChild(cancelButton);
+
+            offerCard.appendChild(message);
+
+            // Cancel deletion
+            cancelButton.addEventListener("click", () => {
+                message.remove();
+            });
+
+            // Confirm deletion
+            yesButton.addEventListener("click", () => {
+                const savedOffers = JSON.parse(
+                    localStorage.getItem("savedOffers") || "[]"
+                );
+
+                const updatedOffers = savedOffers.filter(
+                    offer => offer.id !== offerId
+                );
+
+                localStorage.setItem(
+                    "savedOffers",
+                    JSON.stringify(updatedOffers)
+                );
+
+                // Clear matching form fields
+                const number = offerId === "offer1" ? "1" :
+                               offerId === "offer2" ? "2" : null;
+
+                if (number) {
+                    const fieldIds = [
+                        `companyName${number}`,
+                        `jobTitle${number}`,
+                        `salary${number}`,
+                        `workMode${number}`,
+                        `vacationDays${number}`,
+                        `healthBenefits${number}`,
+                        `netPayAfterRelocation${number}`
+                    ];
+
+                    fieldIds.forEach(id => {
+                        const field = document.getElementById(id);
+                        if (field) field.value = "";
+                    });
+                }
+
+                renderSavedOffers();
+                refreshOfferCheckboxes();
+
+                const saveStatus = document.getElementById("saveStatus");
+
+                if (saveStatus) {
+                    saveStatus.textContent =
+                        "Job offer deleted successfully!";
+                }
+            });
+
+            return;
+        }
+    });
+
+
+    // SAVE JOB OFFERS
     const saveOfferBtn = document.getElementById("saveOfferBtn");
     const saveStatus = document.getElementById("saveStatus");
 
     if (saveOfferBtn && saveStatus) {
-        saveOfferBtn.addEventListener("click", () => {
+        saveOfferBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+
             try {
                 const offers = gatherAllCurrentOffers();
 
                 if (offers.length === 0) {
-                    saveStatus.textContent = "Please enter at least one job offer.";
+                    saveStatus.textContent =
+                        "Please enter at least one job offer.";
                     return;
                 }
 
@@ -136,41 +346,48 @@ document.addEventListener("DOMContentLoaded", () => {
                     savedOffers.map(offer => [offer.id, offer])
                 );
 
-                offers.forEach((offer) => {
+                offers.forEach(offer => {
                     offersById.set(offer.id, offer);
                 });
 
-                const updatedOffers = Array.from(offersById.values());
+                const updatedOffers = Array.from(
+                    offersById.values()
+                );
 
                 localStorage.setItem(
                     "savedOffers",
                     JSON.stringify(updatedOffers)
                 );
 
-                saveStatus.textContent = "Offers saved successfully!";
+                saveStatus.textContent =
+                    "Offers saved successfully!";
 
-                // Refresh the saved offers list
                 renderSavedOffers();
 
             } catch (error) {
                 console.error("Error saving offers:", error);
-                saveStatus.textContent = "Sorry, your offers could not be saved.";
+
+                saveStatus.textContent =
+                    "Sorry, your offers could not be saved.";
             }
         });
     }
 
 
-    // Form interactions and live updates
+    // FORM INPUT AND CHANGE EVENTS
     const form = document.getElementById("evaluationForm");
 
     if (form) {
         form.addEventListener("input", () => {
             refreshOfferCheckboxes();
 
-            // Auto-update evaluation report if it is already open
-            const reportSection = document.getElementById("comparisonReport");
+            const reportSection =
+                document.getElementById("comparisonReport");
 
-            if (reportSection && reportSection.style.display !== "none") {
+            if (
+                reportSection &&
+                reportSection.style.display !== "none"
+            ) {
                 runOfferEvaluation();
             }
         });
@@ -181,7 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Evaluate button click handler
+    // EVALUATE BUTTON
     const evaluateBtn = document.getElementById("evaluateBtn");
 
     if (evaluateBtn) {
@@ -192,7 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Listen for Add Offer and Remove button clicks
+    // ADD OFFER AND REMOVE OFFER BUTTONS
     document.addEventListener("click", (e) => {
 
         if (
@@ -204,6 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 50);
         }
     });
+
 });
 
 
@@ -214,7 +432,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function gatherAllCurrentOffers() {
     const offers = [];
 
-    // Grab Offer 1
+    // Offer 1
     const comp1 = document.getElementById("companyName1")?.value;
 
     if (comp1) {
@@ -230,8 +448,7 @@ function gatherAllCurrentOffers() {
         });
     }
 
-
-    // Grab Offer 2
+    // Offer 2
     const comp2 = document.getElementById("companyName2")?.value;
 
     if (comp2) {
@@ -247,8 +464,7 @@ function gatherAllCurrentOffers() {
         });
     }
 
-
-    // Grab additional dynamically created offer cards
+    // Additional dynamic offers
     const dynamicCards = document.querySelectorAll(
         ".offersContainer .offerCard:not(#offer1):not(#offer2)"
     );
@@ -284,7 +500,7 @@ function initComparisonTool() {
 
 
 /* ========================================================
-   MELKAM: SALARY COMPARISON - CURRENCY FORMATTING
+   SALARY CURRENCY FORMATTING
    ======================================================== */
 
 function formatSalaryCurrency(amount) {
@@ -309,7 +525,7 @@ function formatSalaryCurrency(amount) {
 
 
 /* ========================================================
-   MELKAM: PTO COMPARISON - MISSING DATA FORMATTING
+   PTO COMPARISON FORMATTING
    ======================================================== */
 
 function formatPtoDays(days) {
@@ -332,11 +548,12 @@ function formatPtoDays(days) {
 function refreshOfferCheckboxes() {
     const offers = gatherAllCurrentOffers();
 
-    const checkboxGroup = document.getElementById("offerSelectionCheckboxes");
+    const checkboxGroup = document.getElementById(
+        "offerSelectionCheckboxes"
+    );
 
     if (!checkboxGroup) return;
 
-    // Retain currently checked states if possible
     const previouslyCheckedValues = Array.from(
         document.querySelectorAll(".offer-select-cb:checked")
     ).map(cb => cb.value);
@@ -350,9 +567,9 @@ function refreshOfferCheckboxes() {
     }
 
     checkboxGroup.innerHTML = offers.map((offer, idx) => {
-        const isChecked = previouslyCheckedValues.includes(idx.toString())
-            ? "checked"
-            : "";
+        const isChecked = previouslyCheckedValues.includes(
+            idx.toString()
+        ) ? "checked" : "";
 
         return `
             <label class="offer-checkbox-label">
@@ -363,7 +580,8 @@ function refreshOfferCheckboxes() {
                     ${isChecked}
                     onchange="handleSelectionChange()"
                 >
-                <strong>${offer.companyName}</strong> (${offer.jobTitle})
+                <strong>${offer.companyName}</strong>
+                (${offer.jobTitle})
             </label>
         `;
     }).join("");
@@ -384,7 +602,7 @@ function handleSelectionChange() {
     );
 
     const selectedIndices = Array.from(checkedBoxes).map(
-        cb => parseInt(cb.value)
+        cb => parseInt(cb.value, 10)
     );
 
     renderSideBySideComparison(selectedIndices, offers);
@@ -396,91 +614,86 @@ function handleSelectionChange() {
    ======================================================== */
 
 function renderSideBySideComparison(selectedIndices, offers) {
-    const comparisonContainer = document.getElementById("comparisonContainer");
+    const comparisonContainer = document.getElementById(
+        "comparisonContainer"
+    );
 
     if (!comparisonContainer) return;
 
-    // Fallback if fewer than two offers are selected
     if (!selectedIndices || selectedIndices.length < 2) {
         comparisonContainer.innerHTML = `
             <div id="comparisonFallback" class="comparison-fallback-card">
                 <p>
                     No offers selected for comparison.
                     Please select at least two offers.
-                    (Currently selected: ${selectedIndices ? selectedIndices.length : 0})
+                    (Currently selected: ${
+                        selectedIndices ? selectedIndices.length : 0
+                    })
                 </p>
             </div>
         `;
-
         return;
     }
 
-    // Create a comparison column for each selected offer
-    comparisonContainer.innerHTML = selectedIndices.map((offerIndex, pos) => {
-        const offer = offers[offerIndex];
+    comparisonContainer.innerHTML = selectedIndices.map(
+        (offerIndex, pos) => {
+            const offer = offers[offerIndex];
 
-        if (!offer) return "";
+            if (!offer) return "";
 
-        const scopedColumnId = `column-${pos + 1}`;
+            const scopedColumnId = `column-${pos + 1}`;
 
-        // Find the highest salary
-        const highestSalary = Math.max(
-            ...selectedIndices.map(
-                index => Number(offers[index]?.salary) || 0
-            )
-        );
+            const highestSalary = Math.max(
+                ...selectedIndices.map(
+                    index => Number(offers[index]?.salary) || 0
+                )
+            );
 
-        const salary = Number(offer.salary) || 0;
+            const salary = Number(offer.salary) || 0;
 
-        const isHighestSalary =
-            salary > 0 && salary === highestSalary;
+            const isHighestSalary =
+                salary > 0 && salary === highestSalary;
 
-        const formatCurrency = (value) => {
-            return formatSalaryCurrency(value);
-        };
+            return `
+                <div class="comparison-column" id="${scopedColumnId}">
+                    <h3>${offer.companyName}</h3>
 
-        return `
-            <div class="comparison-column" id="${scopedColumnId}">
-                <h3>${offer.companyName}</h3>
+                    <div class="comp-metric-row">
+                        <span class="comp-metric-label">Job Title:</span>
+                        <span>${offer.jobTitle}</span>
+                    </div>
 
-                <div class="comp-metric-row">
-                    <span class="comp-metric-label">Job Title:</span>
-                    <span>${offer.jobTitle}</span>
+                    <div class="comp-metric-row">
+                        <span class="comp-metric-label">Work Mode:</span>
+                        <span>${offer.workMode}</span>
+                    </div>
+
+                    <div class="comp-metric-row">
+                        <span class="comp-metric-label">Annual Salary:</span>
+                        <span>
+                            ${formatSalaryCurrency(offer.salary)}
+                            ${isHighestSalary ? "⭐ Highest Salary" : ""}
+                        </span>
+                    </div>
+
+                    <div class="comp-metric-row">
+                        <span class="comp-metric-label">Net Pay:</span>
+                        <span>${formatSalaryCurrency(offer.netPay)}</span>
+                    </div>
+
+                    <div class="comp-metric-row">
+                        <span class="comp-metric-label">PTO Days:</span>
+                        <span>${formatPtoDays(offer.vacationDays)}</span>
+                    </div>
+
+                    <div class="comp-metric-row">
+                        <span class="comp-metric-label">Health Benefits:</span>
+                        <span>${offer.healthBenefits ?? "Not provided."} / 10</span>
+                    </div>
                 </div>
-
-                <div class="comp-metric-row">
-                    <span class="comp-metric-label">Work Mode:</span>
-                    <span>${offer.workMode}</span>
-                </div>
-
-                <!-- Melkam: Display Annual Salary and highlight highest salary -->
-                <div class="comp-metric-row">
-                    <span class="comp-metric-label">Annual Salary:</span>
-                    <span>
-                        ${formatCurrency(offer.salary)}
-                        ${isHighestSalary ? "⭐ Highest Salary" : ""}
-                    </span>
-                </div>
-
-                <!-- Melkam: Display Net Pay -->
-                <div class="comp-metric-row">
-                    <span class="comp-metric-label">Net Pay:</span>
-                    <span>${formatCurrency(offer.netPay)}</span>
-                </div>
-
-                <!-- Melkam: Display PTO days -->
-                <div class="comp-metric-row">
-                    <span class="comp-metric-label">PTO Days:</span>
-                    <span>${formatPtoDays(offer.vacationDays)}</span>
-                </div>
-
-                <div class="comp-metric-row">
-                    <span class="comp-metric-label">Health Benefits:</span>
-                    <span>${offer.healthBenefits ?? "Not provided."} / 10</span>
-                </div>
-            </div>
-        `;
-    }).join("");
+            `;
+        }
+    ).join("");
 }
 
 
@@ -491,12 +704,16 @@ function renderSideBySideComparison(selectedIndices, offers) {
 function runOfferEvaluation() {
     const offers = gatherAllCurrentOffers();
 
+    const saveStatus = document.getElementById("saveStatus");
+
     if (offers.length === 0) {
-        alert("Please enter at least one job offer before evaluating.");
+        if (saveStatus) {
+            saveStatus.textContent =
+                "Please enter at least one job offer before evaluating.";
+        }
         return;
     }
 
-    // Gather preference criteria weights
     const weights = {
         salary: parseFloat(document.getElementById("salaryWeight")?.value) || 5,
         workMode: parseFloat(document.getElementById("workModeWeight")?.value) || 5,
@@ -504,8 +721,6 @@ function runOfferEvaluation() {
         vacation: parseFloat(document.getElementById("vacationWeight")?.value) || 5
     };
 
-
-    // Compute weighted scores for each offer
     const evaluatedOffers = offers.map(offer => {
         const salaryVal = parseFloat(offer.salary) || 0;
         const salaryScore = (salaryVal / 150000) * 10;
@@ -547,8 +762,6 @@ function runOfferEvaluation() {
         };
     });
 
-
-    // Find the winning offer
     let highestScore = -1;
 
     evaluatedOffers.forEach(offer => {
@@ -557,8 +770,6 @@ function runOfferEvaluation() {
         }
     });
 
-
-    // Render the comparison report
     const reportSection = document.getElementById("comparisonReport");
     const tableContainer = document.getElementById("tableContainer");
 
@@ -572,9 +783,10 @@ function runOfferEvaluation() {
         </p>
 
         <div class="report-grid">
-            ${evaluatedOffers.map((offer) => {
+            ${evaluatedOffers.map(offer => {
                 const isWinner =
-                    offer.calculatedScore === highestScore && highestScore > 0;
+                    offer.calculatedScore === highestScore &&
+                    highestScore > 0;
 
                 const cardClass = isWinner
                     ? "report-card winning-card"
@@ -605,19 +817,16 @@ function runOfferEvaluation() {
                             <span>${offer.workMode}</span>
                         </div>
 
-                        <!-- Melkam: Display Annual Salary -->
                         <div class="report-metric-row">
                             <span class="report-metric-label">Annual Salary:</span>
                             <span>${formatSalaryCurrency(offer.salary)}</span>
                         </div>
 
-                        <!-- Melkam: Display Net Pay -->
                         <div class="report-metric-row">
                             <span class="report-metric-label">Net Pay:</span>
                             <span>${formatSalaryCurrency(offer.netPay)}</span>
                         </div>
 
-                        <!-- Melkam: Display PTO days -->
                         <div class="report-metric-row">
                             <span class="report-metric-label">PTO Days:</span>
                             <span>${formatPtoDays(offer.vacationDays)}</span>
