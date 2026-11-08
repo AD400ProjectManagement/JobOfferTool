@@ -16,12 +16,12 @@
 
     <main>
         <!-- Saved Job Offers -->
-<section id="savedOffersSection">
-    <h2>Saved Job Offers</h2>
-    <div id="savedOffersList">
-        <p>No saved job offers yet.</p>
-    </div>
-</section>
+        <section id="savedOffersSection">
+            <h2>Saved Job Offers</h2>
+            <div id="savedOffersList">
+                <p>No saved job offers yet.</p>
+            </div>
+        </section>
         <form id="evaluationForm">
             <!-- Preference Criteria -->
             <section id="preferenceCriteria">
@@ -70,6 +70,12 @@
                     <label for="healthBenefits1">Health Benefits Rating (1-10)</label>
                     <input type="number" id="healthBenefits1" min="1" max="10" placeholder="Rating 1-10" required>
 
+                    <label for="retirementPlan1">Retirement Plan</label>
+                    <input type="text" id="retirementPlan1" class="input-retirement" placeholder="e.g., 401(k), 403(b)">
+
+                    <label for="employerMatch1">Employer Match</label>
+                    <input type="text" id="employerMatch1" class="input-match" placeholder="e.g., 5% match">
+
                     <fieldset>
                         <legend>Relocation Required?</legend>
                         <input type="radio" id="relocation1yes" name="relocation1" value="Yes" required>
@@ -110,6 +116,12 @@
                     <label for="healthBenefits2">Health Benefits Rating (1-10)</label>
                     <input type="number" id="healthBenefits2" min="1" max="10" placeholder="Rating 1-10" required>
 
+                    <label for="retirementPlan2">Retirement Plan</label>
+                    <input type="text" id="retirementPlan2" class="input-retirement" placeholder="e.g., 401(k), 403(b)">
+
+                    <label for="employerMatch2">Employer Match</label>
+                    <input type="text" id="employerMatch2" class="input-match" placeholder="e.g., 5% match">
+
                     <fieldset>
                         <legend>Relocation Required?</legend>
                         <input type="radio" id="relocation2yes" name="relocation2" value="Yes" required>
@@ -131,13 +143,13 @@
 
             <!-- Actions -->
             <!-- Actions -->
-<div class="actions">
-    <button type="button" id="saveOfferBtn">Save Offers</button>
-    <button type="submit" id="evaluateBtn">Evaluate Offers</button>
-    <button type="button" id="exportBtn">Export Report</button>
-</div>
+            <div class="actions">
+                <button type="button" id="saveOfferBtn">Save Offers</button>
+                <button type="submit" id="evaluateBtn">Evaluate Offers</button>
+                <button type="button" id="exportBtn">Export Report</button>
+            </div>
 
-<p id="saveStatus" role="status" aria-live="polite"></p>
+            <p id="saveStatus" role="status" aria-live="polite"></p>
         </form>
 
         <!-- Side-by-Side Comparison -->
@@ -196,6 +208,12 @@
 
             <label class="label-benefits">Health Benefits Rating (1-10)</label>
             <input type="number" class="input-benefits" min="1" max="10" placeholder="Rating 1-10" required>
+
+            <label>Retirement Plan</label>
+            <input type="text" class="input-retirement" placeholder="e.g., 401(k), 403(b)">
+
+            <label>Employer Match</label>
+            <input type="text" class="input-match" placeholder="e.g., 5% match">
 
             <fieldset>
                 <legend>Relocation Required?</legend>
