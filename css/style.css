@@ -484,3 +484,18 @@ button:hover {
         padding: 10px 14px;
     }
 }
+.container-one {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.container-two {
+    margin-top: 30px;
+}
+#savedOffersSection {
+    margin-bottom: 40px;
+}
+
+#sideBySideComparison {
+    margin-top: 40px;
+}
