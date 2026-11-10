@@ -15,7 +15,10 @@
     </header>
 
     <main>
+    
+        </section>
         <form id="evaluationForm" novalidate>
+ 
             <!-- Preference Criteria -->
             <section id="preferenceCriteria">
                 <h2>Preference Criteria (Weights 1 - 10)</h2>
@@ -63,6 +66,12 @@
                     <label for="healthBenefits1">Health Benefits Rating (1-10)</label>
                     <input type="number" id="healthBenefits1" min="1" max="10" placeholder="Rating 1-10" required>
 
+                    <label for="retirementPlan1">Retirement Plan</label>
+                    <input type="text" id="retirementPlan1" class="input-retirement" placeholder="e.g., 401(k), 403(b)">
+
+                    <label for="employerMatch1">Employer Match</label>
+                    <input type="text" id="employerMatch1" class="input-match" placeholder="e.g., 5% match">
+
                     <fieldset>
                         <legend>Relocation Required?</legend>
                         <input type="radio" id="relocation1yes" name="relocation1" value="Yes" required>
@@ -103,6 +112,12 @@
                     <label for="healthBenefits2">Health Benefits Rating (1-10)</label>
                     <input type="number" id="healthBenefits2" min="1" max="10" placeholder="Rating 1-10" required>
 
+                    <label for="retirementPlan2">Retirement Plan</label>
+                    <input type="text" id="retirementPlan2" class="input-retirement" placeholder="e.g., 401(k), 403(b)">
+
+                    <label for="employerMatch2">Employer Match</label>
+                    <input type="text" id="employerMatch2" class="input-match" placeholder="e.g., 5% match">
+
                     <fieldset>
                         <legend>Relocation Required?</legend>
                         <input type="radio" id="relocation2yes" name="relocation2" value="Yes" required>
@@ -124,10 +139,36 @@
 
             <!-- Actions -->
             <div class="actions">
+                <button type="button" id="saveOfferBtn">Save Offers</button>
                 <button type="submit" id="evaluateBtn">Evaluate Offers</button>
                 <button type="button" id="exportBtn">Export Report</button>
             </div>
+
+            <p id="saveStatus" role="status" aria-live="polite"></p>
         </form>
+            <!-- Saved Job Offers -->
+        <section id="savedOffersSection">
+            <h2>Saved Job Offers</h2>
+            <div id="savedOffersList">
+                <p>No saved job offers yet.</p>
+            </div>
+
+        <!-- Side-by-Side Comparison -->
+        <section id="sideBySideComparison" class="comparison-section-wrapper">
+            <h2>Side-by-Side Offer Comparison</h2>
+            <div class="comparison-toolbar">
+                <p>Select saved offers to compare (minimum 2):</p>
+                <div id="offerSelectionCheckboxes" class="checkbox-group">
+                    <!-- Dynamically populated by ComparisonReport -->
+                </div>
+            </div>
+
+            <div id="comparisonContainer" class="comparison-container">
+                <div id="comparisonFallback" class="comparison-fallback-card">
+                    <p>No offers selected for comparison. Please select at least two offers.</p>
+                </div>
+            </div>
+        </section>
 
         <!-- Comparison Report -->
         <section id="comparisonReport" style="display: none;">
@@ -169,6 +210,12 @@
             <label class="label-benefits">Health Benefits Rating (1-10)</label>
             <input type="number" class="input-benefits" min="1" max="10" placeholder="Rating 1-10" required>
 
+            <label>Retirement Plan</label>
+            <input type="text" class="input-retirement" placeholder="e.g., 401(k), 403(b)">
+
+            <label>Employer Match</label>
+            <input type="text" class="input-match" placeholder="e.g., 5% match">
+
             <fieldset>
                 <legend>Relocation Required?</legend>
                 <input type="radio" class="radio-yes" value="Yes" required>
@@ -183,6 +230,10 @@
         </section>
     </template>
    <script src="js/validation.js"></script>
+
+    <!-- Script -->
+    <script src="js/comparison.js"></script>
+
 </body>
 
 </html>
