@@ -2,11 +2,12 @@
    SAVED JOB OFFERS
    ======================================================== */
 
-// Display all saved job offers
+// Display saved job offers
 function renderSavedOffers() {
+    const savedOffersSection = document.getElementById("savedOffersSection");
     const savedOffersList = document.getElementById("savedOffersList");
 
-    if (!savedOffersList) return;
+    if (!savedOffersSection || !savedOffersList) return;
 
     try {
         const savedOffers = JSON.parse(
@@ -16,50 +17,49 @@ function renderSavedOffers() {
         savedOffersList.innerHTML = "";
 
         if (!Array.isArray(savedOffers) || savedOffers.length === 0) {
-            const message = document.createElement("p");
-            message.textContent = "No saved job offers yet.";
-            savedOffersList.appendChild(message);
+            savedOffersSection.style.display = "none";
             return;
         }
+
+        savedOffersSection.style.display = "block";
 
         savedOffers.forEach((offer) => {
             const offerCard = document.createElement("div");
             offerCard.className = "saved-offer-card";
 
-            const company = document.createElement("h3");
-            company.textContent = offer.companyName || "Unknown Company";
+            offerCard.innerHTML = `
+                <div class="saved-card-header">
+                    <h3>${offer.companyName || "Unknown Company"}</h3>
+                    <span class="saved-score-tag">${offer.jobTitle || "N/A"}</span>
+                </div>
 
-            const title = document.createElement("p");
-            title.textContent = "Job Title: " + (offer.jobTitle || "N/A");
+                <div class="saved-card-body">
+                    <div class="saved-metric-row">
+                        <span class="saved-metric-label">Annual Salary:</span>
+                        <span class="saved-metric-value">${formatSalaryCurrency(offer.salary)}</span>
+                    </div>
+                    <div class="saved-metric-row">
+                        <span class="saved-metric-label">Work Mode:</span>
+                        <span class="saved-metric-value">${offer.workMode || "N/A"}</span>
+                    </div>
+                    <div class="saved-metric-row">
+                        <span class="saved-metric-label">PTO Days:</span>
+                        <span class="saved-metric-value">${formatPtoDays(offer.vacationDays)}</span>
+                    </div>
+                </div>
 
-            const salary = document.createElement("p");
-            salary.textContent = "Salary: " + formatSalaryCurrency(offer.salary);
-
-            const editButton = document.createElement("button");
-            editButton.type = "button";
-            editButton.textContent = "Edit";
-            editButton.className = "edit-offer-btn";
-            editButton.dataset.offerId = offer.id;
-
-            const deleteButton = document.createElement("button");
-            deleteButton.type = "button";
-            deleteButton.textContent = "Delete";
-            deleteButton.className = "delete-offer-btn";
-            deleteButton.dataset.offerId = offer.id;
-
-            offerCard.appendChild(company);
-            offerCard.appendChild(title);
-            offerCard.appendChild(salary);
-            offerCard.appendChild(editButton);
-            offerCard.appendChild(deleteButton);
+                <div class="saved-card-actions">
+                    <button type="button" class="edit-offer-btn" data-offer-id="${offer.id}">Edit</button>
+                    <button type="button" class="delete-offer-btn" data-offer-id="${offer.id}">Delete</button>
+                </div>
+            `;
 
             savedOffersList.appendChild(offerCard);
         });
 
     } catch (error) {
         console.error("Error displaying saved offers:", error);
-        savedOffersList.textContent =
-            "Unable to display saved job offers.";
+        savedOffersSection.style.display = "none";
     }
 }
 
@@ -829,61 +829,59 @@ function runOfferEvaluation() {
         };
 
         return `
-                    <div class="${cardClass}"
-                        ${isWinner ? 'aria-label="Top ranking winning job offer"' : ""}>
+            <div class="${cardClass}" ${isWinner ? 'aria-label="Top ranking winning job offer"' : ""}>
+                <div class="card-badge-wrapper">
+                    ${isWinner ? '<span class="winner-badge">⭐ Top Recommendation ⭐</span>' : ''}
+                </div>
 
-                        ${isWinner
-                ? '<span class="winner-badge">⭐ Top Recommendation ⭐</span>'
-                : ""}
+                <div class="report-score-header">
+                    <span>${offer.companyName || "Target Company"}</span>
+                    <span class="score-badge">
+                        ${offer.calculatedScore} / 10
+                    </span>
+                </div>
 
-                        <div class="report-score-header">
-                            <span>${offer.companyName || "Target Company"}</span>
-                            <span class="score-badge">
-                                ${offer.calculatedScore} / 10
-                            </span>
-                        </div>
+                <div class="report-metric-row">
+                    <span class="report-metric-label">Job Title:</span>
+                    <span>${offer.jobTitle}</span>
+                </div>
 
-                        <div class="report-metric-row">
-                            <span class="report-metric-label">Job Title:</span>
-                            <span>${offer.jobTitle}</span>
-                        </div>
+                <div class="report-metric-row">
+                    <span class="report-metric-label">Work Mode:</span>
+                    <span>${offer.workMode}</span>
+                </div>
 
-                        <div class="report-metric-row">
-                            <span class="report-metric-label">Work Mode:</span>
-                            <span>${offer.workMode}</span>
-                        </div>
+                <div class="report-metric-row">
+                    <span class="report-metric-label">Annual Salary:</span>
+                    <span>${formatSalaryCurrency(offer.salary)}</span>
+                </div>
 
-                        <div class="report-metric-row">
-                            <span class="report-metric-label">Annual Salary:</span>
-                            <span>${formatSalaryCurrency(offer.salary)}</span>
-                        </div>
+                <div class="report-metric-row">
+                    <span class="report-metric-label">Net Pay:</span>
+                    <span>${formatSalaryCurrency(offer.netPay)}</span>
+                </div>
 
-                        <div class="report-metric-row">
-                            <span class="report-metric-label">Net Pay:</span>
-                            <span>${formatSalaryCurrency(offer.netPay)}</span>
-                        </div>
+                <div class="report-metric-row">
+                    <span class="report-metric-label">PTO Days:</span>
+                    <span>${formatPtoDays(offer.vacationDays)}</span>
+                </div>
 
-                        <div class="report-metric-row">
-                            <span class="report-metric-label">PTO Days:</span>
-                            <span>${formatPtoDays(offer.vacationDays)}</span>
-                        </div>
+                <div class="report-metric-row">
+                    <span class="report-metric-label">Health Benefits:</span>
+                    <span>${offer.healthBenefits} / 10</span>
+                </div>
 
-                        <div class="report-metric-row">
-                            <span class="report-metric-label">Health Benefits:</span>
-                            <span>${offer.healthBenefits} / 10</span>
-                        </div>
+                <div class="report-metric-row">
+                    <span class="report-metric-label">Retirement Plan:</span>
+                    <span>${formatTextFallback(offer.retirementPlan)}</span>
+                </div>
 
-                        <div class="report-metric-row">
-                            <span class="report-metric-label">Retirement Plan:</span>
-                            <span>${formatTextFallback(offer.retirementPlan)}</span>
-                        </div>
-
-                        <div class="report-metric-row">
-                            <span class="report-metric-label">Employer Match:</span>
-                            <span>${formatTextFallback(offer.employerMatch)}</span>
-                        </div>
-                    </div>
-            `;
+                <div class="report-metric-row">
+                    <span class="report-metric-label">Employer Match:</span>
+                    <span>${formatTextFallback(offer.employerMatch)}</span>
+                </div>
+            </div>
+        `;
     }).join("")}
         </div>
     `;
