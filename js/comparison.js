@@ -899,12 +899,14 @@ function initThemeToggle() {
   const toggleBtn = document.getElementById("themeToggleBtn");
   if (!toggleBtn) return;
 
-  // Check if the user previously saved dark mode
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "dark") {
+// Check if the user previously saved dark mode or prefers dark mode
+const savedTheme = localStorage.getItem("theme");
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
     document.body.classList.add("dark-mode");
     toggleBtn.textContent = "☀️ Light Mode";
-  }
+}
 
   // Listen for button clicks
   toggleBtn.addEventListener("click", () => {
@@ -916,3 +918,5 @@ function initThemeToggle() {
     localStorage.setItem("theme", isDark ? "dark" : "light");
   });
 }
+
+
