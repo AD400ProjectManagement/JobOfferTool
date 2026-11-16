@@ -16,6 +16,30 @@
     --border-orange-frame: #c07c40;
 }
 
+/* Dark Mode Color Variables & Transitions */
+body.dark-mode {
+    --bg-main: #12161f;
+    --surface-card: #1e2433;
+    --surface-card-alt: #2a211b;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-main: #334155;
+    --color-blue-accent: #38bdf8;
+    --blue-hover: #0ea5e9;
+}
+
+body {
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+#themeToggleBtn {
+    margin-top: 0.75rem;
+    background-color: var(--surface-card);
+    color: var(--text-main);
+    border: 1px solid var(--border-main);
+    padding: 0.5rem 1rem;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -653,4 +677,37 @@ button:active {
     .offersContainer {
         grid-template-columns: 1fr;
     }
+}
+
+/* =====================================
+   DARK MODE ELEMENT OVERRIDES
+   ===================================== */
+body.dark-mode .form-section-group,
+body.dark-mode input[type="text"],
+body.dark-mode input[type="number"],
+body.dark-mode select,
+body.dark-mode .comparison-column,
+body.dark-mode .comparison-fallback-card,
+body.dark-mode #savedOffersList p,
+body.dark-mode .report-card {
+    background-color: #161b26;
+    color: var(--text-main);
+    border-color: var(--border-main);
+}
+
+body.dark-mode .comp-metric-row,
+body.dark-mode .report-metric-row,
+body.dark-mode .saved-metric-row {
+    border-bottom-color: #2d3748;
+}
+
+body.dark-mode .saved-score-tag,
+body.dark-mode .edit-offer-btn {
+    background-color: #1e3a5f;
+    color: #7dd3fc;
+}
+
+body.dark-mode .delete-offer-btn {
+    background-color: #4c1d1d;
+    color: #fca5a5;
 }
