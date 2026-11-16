@@ -1,3 +1,21 @@
+:root {
+    --bg-main: #f4f6f9;
+    --surface-card: #ffffff;
+    --surface-card-alt: #fff8f2;
+    --text-main: #222222;
+    --text-muted: #666666;
+    --border-main: #cbd5e0;
+
+    /* Blue Accents (Links, Buttons, Focus) */
+    --color-blue-accent: #0088ff;
+    --border-blue-frame: #4084c0;
+    --blue-hover: #006ce6;
+
+    /* Orange Accents (Winning Offers & Highlights) */
+    --color-orange-accent: #ff7700;
+    --border-orange-frame: #c07c40;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,14 +24,23 @@
 }
 
 body {
-    background-color: #f4f6f9;
-    color: #333;
+    background-color: var(--bg-main);
+    color: var(--text-main);
     padding: 2rem;
+    line-height: 1.5;
 }
 
 header {
     text-align: center;
     margin-bottom: 2rem;
+}
+
+header h1 {
+    color: var(--text-main);
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
 }
 
 main {
@@ -22,34 +49,91 @@ main {
 }
 
 /* Sections & Cards */
+#evaluationForm,
 #preferenceCriteria,
 .offerCard,
+#savedOffersSection,
+.comparison-section-wrapper,
 #comparisonReport {
-    background: #ffffff;
-    border-radius: 8px;
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-main);
+    border-radius: 10px;
     padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     margin-bottom: 1.5rem;
 }
 
-h2,
-h3 {
+h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
     margin-bottom: 1rem;
-    color: #1a202c;
+    color: var(--text-main);
 }
 
-/* Form layouts */
+h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+}
+
+/* Form layouts (Preference Criteria Weights) */
 .formGroup {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: max-content 1fr max-content 1fr;
+    gap: 1rem 2rem;
+    align-items: center;
+}
+
+.formGroup label {
+    justify-self: start;
+    margin-top: 0;
+}
+
+.form-section-group {
+    border: 1px solid var(--border-main);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    background-color: #fafbfc;
+}
+
+.form-section-group legend {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-blue-accent);
+    padding: 0 0.4rem;
+}
+
+.card-grid-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem 1rem;
+}
+
+.card-grid-row>div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.radio-options {
+    display: flex;
     gap: 1rem;
     align-items: center;
+    margin-top: 0.4rem;
 }
 
 .offersContainer {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
+    margin-top: 1.5rem;
 }
 
 .offerCard {
@@ -61,7 +145,7 @@ h3 {
 label {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #4a5568;
+    color: var(--text-main);
     margin-top: 0.4rem;
 }
 
@@ -70,20 +154,35 @@ input[type="number"],
 select {
     width: 100%;
     padding: 0.6rem 0.75rem;
-    border: 1px solid #cbd5e0;
+    border: 1px solid var(--border-main);
     border-radius: 5px;
     font-size: 0.95rem;
+    background-color: #ffffff;
+    color: var(--text-main);
 }
 
 input:focus,
 select:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+    border-color: var(--color-blue-accent);
+    box-shadow: 0 0 0 3px rgba(0, 136, 255, 0.15);
+}
+
+/* Form Validation States */
+input:user-invalid,
+select:user-invalid {
+    border-color: #e53e3e;
+    background-color: #fff5f5;
+}
+
+input:user-invalid:focus,
+select:user-invalid:focus {
+    border-color: #e53e3e;
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15);
 }
 
 fieldset {
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-main);
     border-radius: 6px;
     padding: 0.6rem 1rem;
     margin-top: 0.5rem;
@@ -92,7 +191,7 @@ fieldset {
 fieldset legend {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #4a5568;
+    color: var(--text-main);
     padding: 0 0.3rem;
 }
 
@@ -105,7 +204,7 @@ fieldset legend {
 }
 
 button {
-    background-color: #3182ce;
+    background-color: var(--color-blue-accent);
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -113,11 +212,17 @@ button {
     font-weight: 600;
     border-radius: 6px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
 }
 
 button:hover {
-    background-color: #2b6cb0;
+    background-color: var(--blue-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+button:active {
+    transform: translateY(0);
 }
 
 #exportBtn {
@@ -136,8 +241,8 @@ button:hover {
 
 #addOfferBtn {
     background-color: transparent;
-    color: #3182ce;
-    border: 2px dashed #3182ce;
+    color: var(--color-blue-accent);
+    border: 2px dashed var(--border-blue-frame);
     padding: 0.6rem 1.2rem;
     font-size: 0.95rem;
     border-radius: 6px;
@@ -146,7 +251,7 @@ button:hover {
 }
 
 #addOfferBtn:hover {
-    background-color: #ebf8ff;
+    background-color: rgba(0, 136, 255, 0.05);
 }
 
 .cardHeader {
@@ -170,7 +275,7 @@ button:hover {
 
 /* Side-by-Side Comparison Styles */
 .comparison-section-wrapper {
-    background: #ffffff;
+    background: var(--surface-card);
     border-radius: 8px;
     padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -180,7 +285,7 @@ button:hover {
 .comparison-toolbar {
     margin-bottom: 1rem;
     font-size: 0.9rem;
-    color: #4a5568;
+    color: var(--text-muted);
 }
 
 .checkbox-group {
@@ -196,17 +301,17 @@ button:hover {
     gap: 0.4rem;
     font-size: 0.9rem;
     cursor: pointer;
-    color: #2d3748;
+    color: var(--text-main);
 }
 
 .offer-checkbox-label input[type="checkbox"] {
-    accent-color: #3182ce;
+    accent-color: var(--color-blue-accent);
     width: 16px;
     height: 16px;
     cursor: pointer;
 }
 
-/* Responsive Grid Container: side-by-side on desktop, stacked on smaller screens */
+/* Responsive Grid Container & Empty States */
 .comparison-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -214,34 +319,41 @@ button:hover {
     margin-top: 1rem;
 }
 
-.comparison-fallback-card {
+.comparison-fallback-card,
+#savedOffersList p {
     grid-column: 1 / -1;
-    background: #f7fafc;
-    border: 2px dashed #cbd5e0;
+    background: #f8fafc;
+    border: 2px dashed var(--border-main);
     padding: 2rem;
     text-align: center;
-    color: #718096;
+    color: var(--text-muted);
     border-radius: 8px;
     font-size: 0.95rem;
+    font-weight: 500;
 }
 
 /* Comparison Column Card */
 .comparison-column {
     background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-main);
     border-radius: 8px;
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.comparison-column:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .comparison-column h3 {
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid var(--border-main);
     padding-bottom: 0.5rem;
     margin-bottom: 0.5rem;
-    color: #2d3748;
+    color: var(--text-main);
     font-size: 1.1rem;
 }
 
@@ -255,23 +367,24 @@ button:hover {
 
 .comp-metric-label {
     font-weight: 600;
-    color: #4a5568;
+    color: var(--text-muted);
 }
-
-/* ======================================================== */
-/* TODO (Melkam): Add salary/net-pay display & highest      */
-/* salary highlight styles here.                            */
-/* ======================================================== */
 
 /* Comparison Report & Scoring Results */
 #comparisonReport {
     display: none;
-    /* Toggled on by JS when evaluation runs */
-    background: #ffffff;
+    background: var(--surface-card);
     border-radius: 8px;
     padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     margin-bottom: 1.5rem;
+}
+
+.card-badge-wrapper {
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
 }
 
 .report-grid {
@@ -283,30 +396,34 @@ button:hover {
 
 .report-card {
     background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-main);
     border-radius: 8px;
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     position: relative;
-    transition: all 0.2s ease-in-out;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Winning Offer High-Contrast Highlight */
+.report-card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
 .report-card.winning-card {
-    background: #fffdf5;
-    border: 2px solid #d69e2e;
-    box-shadow: 0 4px 14px rgba(214, 158, 46, 0.15);
+    background-color: var(--surface-card-alt);
+    border: 2px solid var(--border-orange-frame);
+    box-shadow: 0 4px 16px rgba(255, 119, 0, 0.15);
 }
 
 .winner-badge {
-    background-color: #d69e2e;
+    background-color: var(--color-orange-accent);
     color: #ffffff;
+    border: 1px solid var(--border-orange-frame);
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
-    padding: 0.25rem 0.5rem;
+    padding: 0.3rem 0.6rem;
     border-radius: 4px;
     align-self: flex-start;
     letter-spacing: 0.05em;
@@ -315,8 +432,8 @@ button:hover {
 .report-score-header {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #1a202c;
-    border-bottom: 2px solid #e2e8f0;
+    color: var(--text-main);
+    border-bottom: 2px solid var(--border-main);
     padding-bottom: 0.5rem;
     display: flex;
     justify-content: space-between;
@@ -324,7 +441,7 @@ button:hover {
 }
 
 .score-badge {
-    background-color: #3182ce;
+    background-color: var(--color-blue-accent);
     color: white;
     font-size: 0.9rem;
     padding: 0.2rem 0.5rem;
@@ -332,7 +449,7 @@ button:hover {
 }
 
 .winning-card .score-badge {
-    background-color: #d69e2e;
+    background-color: var(--color-orange-accent);
 }
 
 .report-metric-row {
@@ -345,70 +462,114 @@ button:hover {
 
 .report-metric-label {
     font-weight: 600;
-    color: #4a5568;
+    color: var(--text-muted);
 }
 
 /* =====================================
-   SAVED JOB OFFERS
+   POLISHED SAVED OFFER CARDS
 ===================================== */
+
+#savedOffersSection h2 {
+    margin-bottom: 1rem;
+}
 
 #savedOffersList {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
 }
 
 .saved-offer-card {
-    background: #ffffff;
-    border: 1px solid #f0c5d9;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--surface-card);
+    border: 1px solid var(--border-main);
+    border-radius: 10px;
+    padding: 1.25rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
 }
 
 .saved-offer-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.10);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-.saved-offer-card h3 {
-    color: #a83268;
-    margin-top: 0;
-    margin-bottom: 12px;
-    font-size: 20px;
+.saved-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border-main);
+    padding-bottom: 0.6rem;
 }
 
-.saved-offer-card p {
-    color: #555;
-    margin: 8px 0;
-    line-height: 1.5;
+.saved-card-header h3 {
+    color: var(--text-main);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
 }
 
-/* =====================================
-   EDIT AND DELETE BUTTONS
-===================================== */
+.saved-score-tag {
+    background-color: #e6f2ff;
+    color: var(--color-blue-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
 
-.edit-offer-btn,
-.delete-offer-btn {
-    border: none;
-    border-radius: 6px;
-    padding: 9px 18px;
-    margin: 12px 8px 0 0;
-    font-size: 14px;
+.saved-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.saved-metric-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.saved-metric-label {
     font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
+    color: var(--text-muted);
+}
+
+.saved-metric-value {
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+.saved-card-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.saved-card-actions button {
+    flex: 1;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
 }
 
 .edit-offer-btn {
-    background: #fce4ef;
-    color: #a83268;
+    background: #e6f2ff;
+    color: var(--color-blue-accent);
 }
 
 .edit-offer-btn:hover {
-    background: #f5c6dc;
+    background: #cce5ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 .delete-offer-btn {
@@ -418,6 +579,8 @@ button:hover {
 
 .delete-offer-btn:hover {
     background: #ffcaca;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* =====================================
@@ -459,7 +622,7 @@ button:hover {
 
 .cancel-delete-btn {
     background: #e5e7eb;
-    color: #333;
+    color: var(--text-main);
 }
 
 .cancel-delete-btn:hover {
@@ -470,32 +633,24 @@ button:hover {
    MOBILE RESPONSIVE
 ===================================== */
 
-@media (max-width: 600px) {
-    #savedOffersList {
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+
+    .formGroup {
+        grid-template-columns: max-content 1fr;
+        gap: 1rem;
+    }
+
+    .card-grid-row {
         grid-template-columns: 1fr;
     }
 
-    .saved-offer-card {
-        padding: 15px;
+    .comparison-container,
+    .report-grid,
+    #savedOffersList,
+    .offersContainer {
+        grid-template-columns: 1fr;
     }
-
-    .edit-offer-btn,
-    .delete-offer-btn {
-        padding: 10px 14px;
-    }
-}
-.container-one {
-    margin-top: 30px;
-    margin-bottom: 30px;
-}
-
-.container-two {
-    margin-top: 30px;
-}
-#savedOffersSection {
-    margin-bottom: 40px;
-}
-
-#sideBySideComparison {
-    margin-top: 40px;
 }
