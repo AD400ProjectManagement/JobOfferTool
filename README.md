@@ -18,6 +18,8 @@ This project was collaboratively designed and developed by:
 - **Dynamic Offer Expansion:** Add or remove multiple job offer forms seamlessly using native HTML templates.
 - **Responsive Layout Shell:** CSS Grid and Flexbox architecture that scales gracefully from ultra-wide desktop monitors down to mobile and tablet viewports.
 - **Zero Framework Bloat:** Developed entirely with clean HTML5, modern CSS3, and vanilla JavaScript for maximum speed and compatibility.
+- **Dark / Light Theme Toggle:** Switch between light and dark mode with automatic system preference detection and `localStorage` persistence.
+
 
 ## Project Structure
 

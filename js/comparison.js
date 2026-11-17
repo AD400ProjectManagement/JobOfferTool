@@ -122,6 +122,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize comparison checkboxes
     initComparisonTool();
 
+    // Dark Mode theme switcher
+    initThemeToggle();
+
     // Handle Edit and Delete buttons
     document.addEventListener("click", (e) => {
 
@@ -888,3 +891,32 @@ function runOfferEvaluation() {
 
     reportSection.scrollIntoView({ behavior: "smooth" });
 }
+
+/* ========================================================
+   DARK MODE / LIGHT MODE TOGGLE
+   ======================================================== */
+function initThemeToggle() {
+  const toggleBtn = document.getElementById("themeToggleBtn");
+  if (!toggleBtn) return;
+
+// Check if the user previously saved dark mode or prefers dark mode
+const savedTheme = localStorage.getItem("theme");
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+    document.body.classList.add("dark-mode");
+    toggleBtn.textContent = "☀️ Light Mode";
+}
+
+  // Listen for button clicks
+  toggleBtn.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+    const isDark = document.body.classList.contains("dark-mode");
+
+    // Update button label and save preference
+    toggleBtn.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  });
+}
+
+
