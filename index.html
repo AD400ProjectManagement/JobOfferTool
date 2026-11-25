@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,35 +11,52 @@
 
 <body>
 
-<header>
-  <h1>Job Offer Evaluation Tool</h1>
-  <button type="button" id="themeToggleBtn" aria-label="Toggle dark mode">
-    🌙 Dark Mode
-  </button>
-</header>
+    <header>
+        <h1>Job Offer Evaluation Tool</h1>
+        <button type="button" id="themeToggleBtn" aria-label="Toggle dark mode">
+            🌙 Dark Mode
+        </button>
+    </header>
 
     <main>
         <form id="evaluationForm">
+
             <!-- Preference Criteria -->
             <section id="preferenceCriteria">
                 <h2>Preference Criteria (Weights 1 - 10)</h2>
+
                 <div class="formGroup">
-                    <label for="salaryWeight">Salary Weight:</label>
-                    <input type="number" id="salaryWeight" min="1" max="10" placeholder="1-10" required>
 
-                    <label for="workModeWeight">Work Mode Weight:</label>
-                    <input type="number" id="workModeWeight" min="1" max="10" placeholder="1-10" required>
+                    <div class="weight-control">
+                        <label for="salaryWeight">Salary Weight:</label>
+                        <input type="range" id="salaryWeight" min="1" max="10" value="5">
+                        <span id="salaryWeightValue">5 / 10</span>
+                    </div>
 
-                    <label for="benefitsWeight">Benefits Weight:</label>
-                    <input type="number" id="benefitsWeight" min="1" max="10" placeholder="1-10" required>
+                    <div class="weight-control">
+                        <label for="workModeWeight">Work Mode Weight:</label>
+                        <input type="range" id="workModeWeight" min="1" max="10" value="5">
+                        <span id="workModeWeightValue">5 / 10</span>
+                    </div>
 
-                    <label for="vacationWeight">Vacation/PTO Weight:</label>
-                    <input type="number" id="vacationWeight" min="1" max="10" placeholder="1-10" required>
+                    <div class="weight-control">
+                        <label for="benefitsWeight">Benefits Weight:</label>
+                        <input type="range" id="benefitsWeight" min="1" max="10" value="5">
+                        <span id="benefitsWeightValue">5 / 10</span>
+                    </div>
+
+                    <div class="weight-control">
+                        <label for="vacationWeight">Vacation/PTO Weight:</label>
+                        <input type="range" id="vacationWeight" min="1" max="10" value="5">
+                        <span id="vacationWeightValue">5 / 10</span>
+                    </div>
+
                 </div>
             </section>
 
             <!-- Job Offers -->
             <div class="offersContainer">
+
                 <!-- Job Offer One Form -->
                 <section class="offerCard" id="offer1">
                     <div class="cardHeader">
@@ -48,30 +66,41 @@
                     <!-- Group 1: Core & Compensation -->
                     <fieldset class="form-section-group">
                         <legend>Core & Compensation</legend>
+
                         <div class="card-grid-row">
+
                             <div>
                                 <label for="companyName1">Company Name</label>
                                 <input type="text" id="companyName1" placeholder="e.g. Amazon" required>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div>
                                 <label for="jobTitle1">Job Title</label>
                                 <input type="text" id="jobTitle1" placeholder="e.g. Software Engineer" required>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div>
                                 <label for="salary1">Annual Salary ($)</label>
                                 <input type="number" id="salary1" min="1" placeholder="e.g. 95000" required>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div>
                                 <label for="netPayAfterRelocation1">Net Pay After Relocation ($)</label>
                                 <input type="number" id="netPayAfterRelocation1" placeholder="Estimated net pay">
                             </div>
+
                         </div>
                     </fieldset>
 
                     <!-- Group 2: Location & Logistics -->
                     <fieldset class="form-section-group">
                         <legend>Location & Work Mode</legend>
+
                         <div class="card-grid-row">
+
                             <div>
                                 <label for="workMode1">Work Mode</label>
                                 <select id="workMode1" required>
@@ -80,41 +109,51 @@
                                     <option value="Hybrid">Hybrid</option>
                                     <option value="On-site">On-site</option>
                                 </select>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div class="radio-group-container">
                                 <label>Relocation Required?</label>
                                 <div class="radio-options">
                                     <input type="radio" id="relocation1yes" name="relocation1" value="Yes" required>
                                     <label for="relocation1yes">Yes</label>
+
                                     <input type="radio" id="relocation1no" name="relocation1" value="No" checked>
                                     <label for="relocation1no">No</label>
                                 </div>
                             </div>
+
                         </div>
                     </fieldset>
 
                     <!-- Group 3: Benefits & Perks -->
                     <fieldset class="form-section-group">
                         <legend>Benefits & Perks</legend>
+
                         <div class="card-grid-row">
+
                             <div>
                                 <label for="vacationDays1">Vacation Days / PTO</label>
                                 <input type="number" id="vacationDays1" min="0" placeholder="e.g. 15" required>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div>
                                 <label for="healthBenefits1">Health Benefits (1-10)</label>
-                                <input type="number" id="healthBenefits1" min="1" max="10" placeholder="Rating 1-10"
-                                    required>
+                                <input type="number" id="healthBenefits1" min="1" max="10" placeholder="Rating 1-10" required>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div>
                                 <label for="retirementPlan1">Retirement Plan</label>
-                                <input type="text" id="retirementPlan1" class="input-retirement"
-                                    placeholder="e.g., 401(k)">
+                                <input type="text" id="retirementPlan1" class="input-retirement" placeholder="e.g., 401(k)">
                             </div>
+
                             <div>
                                 <label for="employerMatch1">Employer Match</label>
                                 <input type="text" id="employerMatch1" class="input-match" placeholder="e.g., 5% match">
                             </div>
+
                         </div>
                     </fieldset>
                 </section>
@@ -128,30 +167,41 @@
                     <!-- Group 1: Core & Compensation -->
                     <fieldset class="form-section-group">
                         <legend>Core & Compensation</legend>
+
                         <div class="card-grid-row">
+
                             <div>
                                 <label for="companyName2">Company Name</label>
-                                <input type="text" id="companyName2" placeholder="e.g. Google" required>
+                                <input type="text" id="companyName2" placeholder="e.g. Amazon" required>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div>
                                 <label for="jobTitle2">Job Title</label>
-                                <input type="text" id="jobTitle2" placeholder="e.g. Frontend Developer" required>
+                                <input type="text" id="jobTitle2" placeholder="e.g. Software Engineer" required>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div>
                                 <label for="salary2">Annual Salary ($)</label>
-                                <input type="number" id="salary2" min="1" placeholder="e.g. 130000" required>
+                                <input type="number" id="salary2" min="1" placeholder="e.g. 95000" required>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div>
                                 <label for="netPayAfterRelocation2">Net Pay After Relocation ($)</label>
                                 <input type="number" id="netPayAfterRelocation2" placeholder="Estimated net pay">
                             </div>
+
                         </div>
                     </fieldset>
 
                     <!-- Group 2: Location & Logistics -->
                     <fieldset class="form-section-group">
                         <legend>Location & Work Mode</legend>
+
                         <div class="card-grid-row">
+
                             <div>
                                 <label for="workMode2">Work Mode</label>
                                 <select id="workMode2" required>
@@ -160,44 +210,55 @@
                                     <option value="Hybrid">Hybrid</option>
                                     <option value="On-site">On-site</option>
                                 </select>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div class="radio-group-container">
                                 <label>Relocation Required?</label>
                                 <div class="radio-options">
                                     <input type="radio" id="relocation2yes" name="relocation2" value="Yes" required>
                                     <label for="relocation2yes">Yes</label>
+
                                     <input type="radio" id="relocation2no" name="relocation2" value="No" checked>
                                     <label for="relocation2no">No</label>
                                 </div>
                             </div>
+
                         </div>
                     </fieldset>
 
                     <!-- Group 3: Benefits & Perks -->
                     <fieldset class="form-section-group">
                         <legend>Benefits & Perks</legend>
+
                         <div class="card-grid-row">
+
                             <div>
                                 <label for="vacationDays2">Vacation Days / PTO</label>
                                 <input type="number" id="vacationDays2" min="0" placeholder="e.g. 20" required>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div>
                                 <label for="healthBenefits2">Health Benefits (1-10)</label>
-                                <input type="number" id="healthBenefits2" min="1" max="10" placeholder="Rating 1-10"
-                                    required>
+                                <input type="number" id="healthBenefits2" min="1" max="10" placeholder="Rating 1-10" required>
+                                <span class="field-error" aria-live="polite"></span>
                             </div>
+
                             <div>
                                 <label for="retirementPlan2">Retirement Plan</label>
-                                <input type="text" id="retirementPlan2" class="input-retirement"
-                                    placeholder="e.g., 401(k)">
+                                <input type="text" id="retirementPlan2" class="input-retirement" placeholder="e.g., 401(k)">
                             </div>
+
                             <div>
                                 <label for="employerMatch2">Employer Match</label>
                                 <input type="text" id="employerMatch2" class="input-match" placeholder="e.g., 5% match">
                             </div>
+
                         </div>
                     </fieldset>
                 </section>
+
             </div>
 
             <!-- Add Offer Button -->
@@ -212,6 +273,7 @@
             </div>
 
             <p id="saveStatus" role="status" aria-live="polite"></p>
+
         </form>
 
         <!-- Saved Job Offers -->
@@ -225,6 +287,7 @@
         <!-- Side-by-Side Comparison -->
         <section id="sideBySideComparison" class="comparison-section-wrapper">
             <h2>Side-by-Side Offer Comparison</h2>
+
             <div class="comparison-toolbar">
                 <p>Select saved offers to compare (minimum 2):</p>
                 <div id="offerSelectionCheckboxes" class="checkbox-group">
@@ -246,41 +309,57 @@
                 <!-- Rendered dynamically by ComparisonReport -->
             </div>
         </section>
+
     </main>
 
     <!-- Additional Offer Template -->
     <template id="offerTemplate">
+
         <section class="offerCard">
+
             <div class="cardHeader">
                 <h3 class="offerTitle">Job Offer</h3>
                 <button type="button" class="removeOfferBtn">Remove</button>
             </div>
 
+            <!-- Group 1: Core & Compensation -->
             <fieldset class="form-section-group">
                 <legend>Core & Compensation</legend>
+
                 <div class="card-grid-row">
+
                     <div>
                         <label class="label-company">Company Name</label>
-                        <input type="text" class="input-company" placeholder="e.g. Initech" required>
+                        <input type="text" class="input-company" placeholder="e.g. Amazon" required>
+                        <span class="field-error" aria-live="polite"></span>
                     </div>
+
                     <div>
                         <label class="label-title">Job Title</label>
-                        <input type="text" class="input-title" placeholder="e.g. Backend Developer" required>
+                        <input type="text" class="input-title" placeholder="e.g. Software Engineer" required>
+                        <span class="field-error" aria-live="polite"></span>
                     </div>
+
                     <div>
                         <label class="label-salary">Annual Salary ($)</label>
-                        <input type="number" class="input-salary" min="1" placeholder="e.g. 110000" required>
+                        <input type="number" class="input-salary" min="1" placeholder="e.g. 95000" required>
+                        <span class="field-error" aria-live="polite"></span>
                     </div>
+
                     <div>
                         <label class="label-netpay">Net Pay After Relocation ($)</label>
                         <input type="number" class="input-netpay" placeholder="Estimated net pay">
                     </div>
+
                 </div>
             </fieldset>
 
+            <!-- Group 2: Location & Work Mode -->
             <fieldset class="form-section-group">
                 <legend>Location & Work Mode</legend>
+
                 <div class="card-grid-row">
+
                     <div>
                         <label class="label-workmode">Work Mode</label>
                         <select class="input-workmode" required>
@@ -289,48 +368,65 @@
                             <option value="Hybrid">Hybrid</option>
                             <option value="On-site">On-site</option>
                         </select>
+                        <span class="field-error" aria-live="polite"></span>
                     </div>
+
                     <div>
                         <fieldset style="border:none; padding:0; margin:0;">
-                            <legend style="padding:0; font-size:0.85rem; font-weight:600;">Relocation Required?</legend>
+                            <legend style="padding:0; font-size:0.85rem; font-weight:600;">
+                                Relocation Required?
+                            </legend>
+
                             <div class="radio-options" style="margin-top:0.4rem;">
                                 <input type="radio" class="radio-yes" value="Yes" required>
                                 <label class="label-radio-yes">Yes</label>
+
                                 <input type="radio" class="radio-no" value="No" checked>
                                 <label class="label-radio-no">No</label>
                             </div>
                         </fieldset>
                     </div>
+
                 </div>
             </fieldset>
 
+            <!-- Group 3: Benefits & Perks -->
             <fieldset class="form-section-group">
                 <legend>Benefits & Perks</legend>
+
                 <div class="card-grid-row">
+
                     <div>
                         <label class="label-vacation">Vacation Days / PTO</label>
                         <input type="number" class="input-vacation" min="0" placeholder="e.g. 18" required>
+                        <span class="field-error" aria-live="polite"></span>
                     </div>
+
                     <div>
                         <label class="label-benefits">Health Benefits (1-10)</label>
                         <input type="number" class="input-benefits" min="1" max="10" placeholder="Rating 1-10" required>
+                        <span class="field-error" aria-live="polite"></span>
                     </div>
+
                     <div>
                         <label>Retirement Plan</label>
                         <input type="text" class="input-retirement" placeholder="e.g., 401(k)">
                     </div>
+
                     <div>
                         <label>Employer Match</label>
                         <input type="text" class="input-match" placeholder="e.g., 5% match">
                     </div>
+
                 </div>
             </fieldset>
+
         </section>
+
     </template>
 
     <!-- Script -->
     <script src="js/comparison.js"></script>
 
 </body>
-
 </html>
