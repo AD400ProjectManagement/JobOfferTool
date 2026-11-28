@@ -1,3 +1,4 @@
+
 /* ========================================================
    SAVED JOB OFFERS
    ======================================================== */
@@ -114,6 +115,90 @@ function loadSavedOffers() {
    ======================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    // AD-26 / AD-30: Live preference weight slider values
+    const weightSliderIds = [
+        "salaryWeight",
+        "workModeWeight",
+        "benefitsWeight",
+        "vacationWeight"
+    ];
+
+    weightSliderIds.forEach((id) => {
+        const slider = document.getElementById(id);
+        const valueDisplay = document.getElementById(id + "Value");
+
+        if (slider && valueDisplay) {
+            valueDisplay.textContent = `${slider.value} / 10`;
+
+            slider.addEventListener("input", () => {
+                valueDisplay.textContent = `${slider.value} / 10`;
+            });
+        }
+    });
+
+    /* ========================================================
+       AD-26 / AD-30: INLINE FIELD VALIDATION
+       ======================================================== */
+
+    function validateRequiredField(field) {
+        const errorMessage =
+            field.parentElement.querySelector(".field-error");
+
+        const label = field.parentElement.querySelector("label");
+
+        const fieldName = label
+            ? label.textContent.trim().replace(/:$/, "")
+            : "This field";
+
+        let message = "";
+
+        if (field.validity.valueMissing) {
+            message = `${fieldName} is required.`;
+        } else if (field.validity.rangeUnderflow) {
+            message = `${fieldName} must be at least ${field.min}.`;
+        } else if (field.validity.rangeOverflow) {
+            message = `${fieldName} cannot be greater than ${field.max}.`;
+        } else if (field.validity.badInput) {
+            message = `Please enter a valid number for ${fieldName}.`;
+        }
+
+        if (message) {
+            field.classList.add("field-invalid");
+            field.setAttribute("aria-invalid", "true");
+
+            if (errorMessage) {
+                errorMessage.textContent = message;
+            }
+
+            return false;
+        }
+
+        field.classList.remove("field-invalid");
+        field.removeAttribute("aria-invalid");
+
+        if (errorMessage) {
+            errorMessage.textContent = "";
+        }
+
+        return true;
+    }
+
+    function validateAllRequiredFields(form) {
+        const requiredFields = form.querySelectorAll(
+            'input[required]:not([type="radio"]), select[required]'
+        );
+
+        let isValid = true;
+
+        requiredFields.forEach((field) => {
+            if (!validateRequiredField(field)) {
+                isValid = false;
+            }
+        });
+
+        return isValid;
+    }
 
     // Load and display saved offers
     loadSavedOffers();
@@ -335,6 +420,12 @@ document.addEventListener("DOMContentLoaded", () => {
         saveOfferBtn.addEventListener("click", (e) => {
             e.preventDefault();
 
+            if (!validateAllRequiredFields(form)) {
+                saveStatus.textContent =
+                    "Please fix the highlighted fields.";
+                return;
+            }
+
             try {
                 const offers = gatherAllCurrentOffers();
 
@@ -388,7 +479,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("evaluationForm");
 
     if (form) {
-        form.addEventListener("input", () => {
+        // Use inline messages instead of browser validation popups
+        form.noValidate = true;
+
+        form.addEventListener("input", (e) => {
+            if (e.target.matches(
+                'input[required]:not([type="radio"]), select[required]'
+            )) {
+                validateRequiredField(e.target);
+            }
+
             refreshOfferCheckboxes();
 
             const reportSection =
@@ -402,7 +502,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        form.addEventListener("change", () => {
+        form.addEventListener("change", (e) => {
+            if (e.target.matches(
+                'input[required]:not([type="radio"]), select[required]'
+            )) {
+                validateRequiredField(e.target);
+            }
+
             refreshOfferCheckboxes();
         });
     }
@@ -413,25 +519,95 @@ document.addEventListener("DOMContentLoaded", () => {
     if (evaluateBtn) {
         evaluateBtn.addEventListener("click", (e) => {
             e.preventDefault();
+
+            if (!validateAllRequiredFields(form)) {
+                saveStatus.textContent =
+                    "Please fix the highlighted fields.";
+                return;
+            }
+
             console.log("Evaluate button clicked!");
+
             const offers = gatherAllCurrentOffers();
+
             console.log("Gathered offers:", offers);
+
             runOfferEvaluation();
         });
     }
 
-    // Listen for Add Offer and Remove button clicks
-    document.addEventListener("click", (e) => {
+    
+// AD-26: ADD AND REMOVE JOB OFFERS
+const addOfferBtn = document.getElementById("addOfferBtn");
+const offerTemplate = document.getElementById("offerTemplate");
+const offersContainer = document.querySelector(".offersContainer");
 
-        if (
-            e.target.id === "addOfferBtn" ||
-            e.target.classList.contains("removeOfferBtn")
-        ) {
-            setTimeout(() => {
-                refreshOfferCheckboxes();
-            }, 50);
+let dynamicOfferCount = 0;
+
+if (addOfferBtn && offerTemplate && offersContainer) {
+
+    // Add a new job offer
+    addOfferBtn.addEventListener("click", () => {
+
+        dynamicOfferCount++;
+
+        // Copy the HTML template
+        const newOffer = offerTemplate.content
+            .firstElementChild.cloneNode(true);
+
+        // Give the new offer a unique ID
+        newOffer.id = `dynamicOffer${dynamicOfferCount}`;
+
+        // Update the heading
+        newOffer.querySelector(".offerTitle").textContent =
+            `Job Offer ${dynamicOfferCount + 2}`;
+
+        // Give radio buttons a unique group name
+        const radioYes = newOffer.querySelector(".radio-yes");
+        const radioNo = newOffer.querySelector(".radio-no");
+
+        radioYes.name = `relocationDynamic${dynamicOfferCount}`;
+        radioNo.name = `relocationDynamic${dynamicOfferCount}`;
+
+        radioYes.id = `relocationDynamic${dynamicOfferCount}yes`;
+        radioNo.id = `relocationDynamic${dynamicOfferCount}no`;
+
+        newOffer.querySelector(".label-radio-yes").htmlFor =
+            radioYes.id;
+
+        newOffer.querySelector(".label-radio-no").htmlFor =
+            radioNo.id;
+
+        // Add the new offer inside the form
+        offersContainer.appendChild(newOffer);
+
+        // Refresh comparison options
+        refreshOfferCheckboxes();
+
+        // Bring the new offer into view
+        newOffer.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    });
+
+    // Remove an additional job offer
+    offersContainer.addEventListener("click", (e) => {
+
+        const removeButton = e.target.closest(".removeOfferBtn");
+
+        if (!removeButton) return;
+
+        const offerCard = removeButton.closest(".offerCard");
+
+        if (offerCard) {
+            offerCard.remove();
+
+            refreshOfferCheckboxes();
         }
     });
+}
+
 });
 
 /* ========================================================
@@ -895,28 +1071,27 @@ function runOfferEvaluation() {
 /* ========================================================
    DARK MODE / LIGHT MODE TOGGLE
    ======================================================== */
+
 function initThemeToggle() {
-  const toggleBtn = document.getElementById("themeToggleBtn");
-  if (!toggleBtn) return;
+    const toggleBtn = document.getElementById("themeToggleBtn");
+    if (!toggleBtn) return;
 
-// Check if the user previously saved dark mode or prefers dark mode
-const savedTheme = localStorage.getItem("theme");
-const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    // Check if the user previously saved dark mode or prefers dark mode
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-    document.body.classList.add("dark-mode");
-    toggleBtn.textContent = "☀️ Light Mode";
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.body.classList.add("dark-mode");
+        toggleBtn.textContent = "☀️ Light Mode";
+    }
+
+    // Listen for button clicks
+    toggleBtn.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        const isDark = document.body.classList.contains("dark-mode");
+
+        // Update button label and save preference
+        toggleBtn.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
 }
-
-  // Listen for button clicks
-  toggleBtn.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-    const isDark = document.body.classList.contains("dark-mode");
-
-    // Update button label and save preference
-    toggleBtn.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  });
-}
-
-

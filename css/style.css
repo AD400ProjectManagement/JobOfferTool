@@ -711,3 +711,69 @@ body.dark-mode .delete-offer-btn {
     background-color: #4c1d1d;
     color: #fca5a5;
 }
+
+/* =====================================
+   AD-26 / AD-30: WEIGHT SLIDERS
+===================================== */
+
+.weight-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.weight-control input[type="range"] {
+    width: 100%;
+    accent-color: var(--color-blue-accent);
+    cursor: pointer;
+}
+
+.weight-control span {
+    color: var(--color-blue-accent);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+/* =====================================
+   AD-26 / AD-30: INLINE VALIDATION
+===================================== */
+
+.field-error {
+    display: block;
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    min-height: 1.2rem;
+}
+
+input.field-invalid,
+select.field-invalid {
+    border: 1px solid #dc2626;
+    background-color: #fff5f5;
+}
+
+input.field-invalid:focus,
+select.field-invalid:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+/* Dark Mode */
+body.dark-mode .field-error {
+    color: #fca5a5;
+}
+
+body.dark-mode input.field-invalid,
+body.dark-mode select.field-invalid {
+    background-color: #3b2025;
+    color: var(--text-main);
+    border-color: #f87171;
+}
+
+/* Responsive sliders */
+@media (max-width: 768px) {
+    .weight-control {
+        width: 100%;
+    }
+}
