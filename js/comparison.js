@@ -2,8 +2,72 @@
 /* ========================================================
    SAVED JOB OFFERS
    ======================================================== */
+/* ========================================================
+   AD-27: SHARED HELPER FUNCTIONS
+   ======================================================== */
 
+// Get saved offers from localStorage
+function getSavedOffers() {
+    try {
+        const savedOffers = JSON.parse(
+            localStorage.getItem("savedOffers") || "[]"
+        );
+
+        return Array.isArray(savedOffers) ? savedOffers : [];
+
+    } catch (error) {
+        console.error("Error reading saved offers:", error);
+        return [];
+    }
+}
+// Save offers to localStorage
+function setSavedOffers(offers) {
+    try {
+        localStorage.setItem(
+            "savedOffers",
+            JSON.stringify(offers)
+        );
+
+        return true;
+
+    } catch (error) {
+        console.error("Error saving offers:", error);
+        return false;
+    }
+}
+
+// Handle empty or missing text
+function formatTextFallback(text) {
+    if (text === null || text === undefined) {
+        return "Not provided.";
+    }
+
+    const value = String(text).trim();
+
+    return value !== "" ? value : "Not provided.";
+}
+// Keep dynamic offer IDs in the correct order
+function updateDynamicOfferIds() {
+    const offersContainer = document.querySelector(".offersContainer");
+
+    if (!offersContainer) return;
+
+    const dynamicCards = offersContainer.querySelectorAll(
+        ".offerCard:not(#offer1):not(#offer2)"
+    );
+
+    dynamicCards.forEach((card, index) => {
+        card.id = `dynamicOffer${index + 3}`;
+
+        const title = card.querySelector(".offerTitle");
+
+        if (title) {
+            title.textContent = `Job Offer ${index + 3}`;
+        }
+    });
+}
 // Display saved job offers
+
 function renderSavedOffers() {
     const savedOffersSection = document.getElementById("savedOffersSection");
     const savedOffersList = document.getElementById("savedOffersList");
@@ -11,9 +75,7 @@ function renderSavedOffers() {
     if (!savedOffersSection || !savedOffersList) return;
 
     try {
-        const savedOffers = JSON.parse(
-            localStorage.getItem("savedOffers") || "[]"
-        );
+        const savedOffers = getSavedOffers();
 
         savedOffersList.innerHTML = "";
 
@@ -67,10 +129,7 @@ function renderSavedOffers() {
 // Load saved job offers into the form
 function loadSavedOffers() {
     try {
-        const savedOffers = JSON.parse(
-            localStorage.getItem("savedOffers") || "[]"
-        );
-
+        const savedOffers = getSavedOffers();
         if (!Array.isArray(savedOffers)) {
             throw new Error("Invalid saved offers data.");
         }
@@ -219,9 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (editButton) {
             const offerId = editButton.dataset.offerId;
 
-            const savedOffers = JSON.parse(
-                localStorage.getItem("savedOffers") || "[]"
-            );
+           const savedOffers = getSavedOffers();
 
             const offer = savedOffers.find(
                 item => item.id === offerId
@@ -363,18 +420,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Confirm deletion
             yesButton.addEventListener("click", () => {
-                const savedOffers = JSON.parse(
-                    localStorage.getItem("savedOffers") || "[]"
-                );
+               const savedOffers = getSavedOffers();
 
                 const updatedOffers = savedOffers.filter(
                     offer => offer.id !== offerId
                 );
 
-                localStorage.setItem(
-                    "savedOffers",
-                    JSON.stringify(updatedOffers)
-                );
+               setSavedOffers(updatedOffers);
 
                 // Clear matching form fields
                 const number = offerId === "offer1" ? "1" :
@@ -435,10 +487,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                const savedOffers = JSON.parse(
-                    localStorage.getItem("savedOffers") || "[]"
-                );
-
+          const savedOffers = getSavedOffers();
                 if (!Array.isArray(savedOffers)) {
                     throw new Error("Invalid saved offers data.");
                 }
@@ -456,11 +505,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     offersById.values()
                 );
 
-                localStorage.setItem(
-                    "savedOffers",
-                    JSON.stringify(updatedOffers)
-                );
-
+              setSavedOffers(updatedOffers);
                 saveStatus.textContent =
                     "Offers saved successfully!";
 
@@ -580,6 +625,7 @@ if (addOfferBtn && offerTemplate && offersContainer) {
 
         // Add the new offer inside the form
         offersContainer.appendChild(newOffer);
+        updateDynamicOfferIds();
 
         // Refresh comparison options
         refreshOfferCheckboxes();
@@ -603,7 +649,9 @@ if (addOfferBtn && offerTemplate && offersContainer) {
         if (offerCard) {
             offerCard.remove();
 
-            refreshOfferCheckboxes();
+      updateDynamicOfferIds();
+
+      refreshOfferCheckboxes();
         }
     });
 }
@@ -842,9 +890,7 @@ function renderSideBySideComparison(selectedIndices, offers) {
                 return formatSalaryCurrency(value);
             };
 
-            const formatTextFallback = (text) => {
-                return text && text.trim() !== "" ? text : "Not provided";
-            };
+           
 
             return `
                 <div class="comparison-column" id="${scopedColumnId}">
@@ -1001,11 +1047,6 @@ function runOfferEvaluation() {
             ? "report-card winning-card"
             : "report-card";
 
-        const formatTextFallback = (text) => {
-            if (text === null || text === undefined) return "Not provided.";
-            const str = String(text).trim();
-            return str !== "" ? str : "Not provided.";
-        };
 
         return `
             <div class="${cardClass}" ${isWinner ? 'aria-label="Top ranking winning job offer"' : ""}>
